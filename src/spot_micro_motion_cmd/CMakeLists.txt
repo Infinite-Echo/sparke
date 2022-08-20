@@ -67,6 +67,7 @@ ament_target_dependencies(${PROJECT_NAME}_node
 # Install launch files.
 install(DIRECTORY
   launch
+  config
   DESTINATION share/${PROJECT_NAME}/
 )
 

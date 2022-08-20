@@ -140,7 +140,7 @@ class SpotMicroServoControl(Node):
         # values: ServoConvert objects
         for i in range(numServos):
             self.servos[i] = ServoConvert(id=i)
-        self.loginfo("> Servos corrrectly initialized")
+        self.get_logger().info("> Servos corrrectly initialized")
 
         # Create empty ServoArray message with n number of Servos in its array
         self._servo_msg = ServoArray()
@@ -148,19 +148,21 @@ class SpotMicroServoControl(Node):
             self._servo_msg.servos.append(Servo())
 
         # Create the servo array publisher
-        self.ros_pub_servo_array = self.Publisher(ServoArray, "/servos_absolute", 10)
-        self.get_logger.info("> Publisher corrrectly initialized")
+        self.ros_pub_servo_array = self.create_publisher(
+            ServoArray, "/servos_absolute", 10
+        )
+        self.get_logger().info("> Publisher corrrectly initialized")
 
-        self.get_logger.info("Initialization complete")
+        self.get_logger().info("Initialization complete")
 
         # Setup terminal input reading, taken from teleop_twist_keyboard
         self.settings = termios.tcgetattr(sys.stdin)
 
     def send_servo_msg(self):
-        for servo_key, servo_obj in self.servos.iteritems():
+        for servo_key, servo_obj in self.servos.items():
             self._servo_msg.servos[servo_obj.id].servo = servo_obj.id + 1
-            self._servo_msg.servos[servo_obj.id].value = servo_obj.value
-            # self.get_logger.info("Sending to %s command %d"%(servo_key, servo_obj.value))
+            self._servo_msg.servos[servo_obj.id].value = float(servo_obj.value)
+            # self.get_logger().info("Sending to %s command %d"%(servo_key, servo_obj.value))
 
         self.ros_pub_servo_array.publish(self._servo_msg)
 
@@ -195,7 +197,7 @@ class SpotMicroServoControl(Node):
         # Ability to control individual servo to find limits and center values
         # and ability to control all servos together
         try:
-            while self.ok():
+            while rclpy.ok():
                 print(msg)
                 userInput = input("Command?: ")
 
@@ -226,8 +228,10 @@ class SpotMicroServoControl(Node):
                         # First get servo number to command
                         nSrv = -1
                         while 1:
-                            userInput = input(
-                                "Which servo to control? Enter a number 1 through 12: "
+                            userInput = int(
+                                input(
+                                    "Which servo to control? Enter a number 1 through 12: "
+                                )
                             )
 
                             if userInput not in range(1, numServos + 1):
@@ -288,9 +292,15 @@ class SpotMicroServoControl(Node):
             # Set the control rate in Hz
 
 
-if __name__ == "__main__":
+def main(args=None):
+    rclpy.init(args=args)
     smsc = SpotMicroServoControl()
     thread = threading.Thread(target=rclpy.spin, args=(smsc,), daemon=True)
     thread.start()
     smsc.run()
     thread.join()
+    rclpy.shutdown()
+
+
+if __name__ == "__main__":
+    main()

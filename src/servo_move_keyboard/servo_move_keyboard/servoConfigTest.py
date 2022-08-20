@@ -309,9 +309,17 @@ class SpotMicroServoControl(Node):
             pass
 
 
-if __name__ == "__main__":
+def main(args=None):
+    rclpy.init(args=args)
+
     smsc = SpotMicroServoControl()
     thread = threading.Thread(target=rclpy.spin, args=(smsc,), daemon=True)
     thread.start()
     smsc.run()
     thread.join()
+
+    rclpy.shutdown()
+
+
+if __name__ == "__main__":
+    main()
