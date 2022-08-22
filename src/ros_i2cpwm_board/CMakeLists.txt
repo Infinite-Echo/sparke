@@ -40,4 +40,10 @@ ament_export_include_directories(include)
 ament_target_dependencies(${PROJECT_NAME}
 "rclcpp" "std_msgs" "std_srvs" "geometry_msgs" "i2c_interfaces")
 
+# Install launch files.
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
+
 ament_package()

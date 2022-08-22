@@ -1399,6 +1399,7 @@ static int _load_params(std::shared_ptr<rclcpp::Node> node) {
     // attempt to load configuration for servos
 
     int number_of_servos;
+    node->declare_parameter("number_of_servos", 12);
 
     if (node->has_parameter("number_of_servos")) {
         node->get_parameter("number_of_servos", number_of_servos);
@@ -1407,9 +1408,34 @@ static int _load_params(std::shared_ptr<rclcpp::Node> node) {
         number_of_servos = 0;
     }
 
-    int **servos = new int *[number_of_servos];
+    float **servos = new float *[number_of_servos];
     for (int i = 0; i < number_of_servos; i++) {
-        servos[i] = new int[4];
+        servos[i] = new float[4];
+    }
+
+    std::map<int, std::string> servo_config_name = {
+        {1, "RF_3"}, {2, "RF_2"}, {3, "RF_1"}, {4, "RB_3"},  {5, "RB_2"},  {6, "RB_1"},
+        {7, "LB_3"}, {8, "LB_2"}, {9, "LB_1"}, {10, "LF_3"}, {11, "LF_2"}, {12, "LF_1"},
+    };
+    std::map<int, std::string> servo_param_name = {
+        {1, "num"},
+        {2, "center"},
+        {3, "direction"},
+        {4, "range"},
+    };
+
+    for (int i = 0; i < number_of_servos; i++) {
+        for (int j = 0; j < 4; j++) {
+            std::stringstream param_name;
+            param_name << servo_config_name[i + 1] << "." << servo_param_name[j + 1];
+            if (node->has_parameter(param_name.str())) {
+                node->get_parameter(param_name.str(), servos[i][j]);
+            } else {
+                RCLCPP_WARN(rclcpp::get_logger("rclcpp"), "Missing parameter '%s'", param_name.str().c_str());
+                servos[i][j] = 0;
+            }
+            node->get_parameter(param_name.str(), servos[i][j]);
+        }
     }
 
     for (int32_t i = 0; i < number_of_servos; i++) {
@@ -1417,10 +1443,10 @@ static int _load_params(std::shared_ptr<rclcpp::Node> node) {
 
         // get the servo settings
         int id, center, direction, range;
-        id = servos[i][0];
-        center = servos[i][1];
-        direction = servos[i][2];
-        range = servos[i][3];
+        id = int(servos[i][0]);
+        center = int(servos[i][1]);
+        direction = int(servos[i][2]);
+        range = int(servos[i][3]);
 
         if (id && center && direction && range) {
             if ((id >= 1) && (id <= MAX_SERVOS)) {
@@ -1518,7 +1544,8 @@ int main(int argc, char **argv) {
     // initialize the ROS2 node
     rclcpp::init(argc, argv);
 
-    std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("i2cpwm_controller");
+    std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared(
+        "i2cpwm_controller", rclcpp::NodeOptions().allow_undeclared_parameters(true).automatically_declare_parameters_from_overrides(true));
 
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "i2cpwm_controller node initialized");
 
