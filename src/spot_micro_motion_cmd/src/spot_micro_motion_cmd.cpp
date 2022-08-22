@@ -192,6 +192,8 @@ void SpotMicroMotionCmd::runOnce() {
 
 bool SpotMicroMotionCmd::publishServoConfiguration() {
     // Create a temporary servo config
+    return true;
+
     i2c_interfaces::msg::ServoConfig temp_servo_config;
     auto temp_servo_config_array = std::make_shared<i2c_interfaces::srv::ServosConfig::Request>();
 
@@ -341,48 +343,48 @@ void SpotMicroMotionCmd::commandIdle() { cmd_.idle_cmd_ = true; }
 std::string SpotMicroMotionCmd::getCurrentStateName() { return state_->getCurrentStateName(); }
 
 void SpotMicroMotionCmd::readInConfigParameters() {
-    this->declare_parameter<float>("hip_link_length", 0.055);
-    this->declare_parameter<float>("upper_leg_link_length", 0.1075);
-    this->declare_parameter<float>("lower_leg_link_length", 0.130);
-    this->declare_parameter<float>("body_width", 0.078);
-    this->declare_parameter<float>("body_length", 0.186);
-    this->declare_parameter<float>("default_stand_height", 0.155);
-    this->declare_parameter<float>("stand_front_x_offset", 0.015);
-    this->declare_parameter<float>("stand_back_x_offset", -0.000);
-    this->declare_parameter<float>("lie_down_height", 0.083);
-    this->declare_parameter<float>("lie_down_foot_x_offset", 0.065);
-    this->declare_parameter<int>("num_servos", 12);
-    this->declare_parameter<float>("servo_max_angle_deg", 82.5);
-    this->declare_parameter<float>("transit_tau", 0.3);
-    this->declare_parameter<float>("transit_rl", 0.06);
-    this->declare_parameter<float>("transit_angle_rl", 0.35);
-    this->declare_parameter<float>("dt", 0.02);
-    this->declare_parameter<bool>("debug_mode", false);
-    this->declare_parameter<bool>("run_standalone", false);
-    this->declare_parameter<bool>("plot_mode", false);
-    this->declare_parameter<float>("max_fwd_velocity", 0.4);
-    this->declare_parameter<float>("max_side_velocity", 0.4);
-    this->declare_parameter<float>("max_yaw_rate", 0.35);
-    this->declare_parameter<float>("z_clearance", 0.050);
-    this->declare_parameter<float>("alpha", 0.5);
-    this->declare_parameter<float>("beta", 0.5);
-    this->declare_parameter<int>("num_phases", 8);
-    this->declare_parameter<std::vector<int64_t>>("rb_contact_phases", {1, 0, 1, 1, 1, 1, 1, 1});
-    this->declare_parameter<std::vector<int64_t>>("rf_contact_phases", {1, 1, 1, 0, 1, 1, 1, 1});
-    this->declare_parameter<std::vector<int64_t>>("lf_contact_phases", {1, 1, 1, 1, 1, 1, 1, 0});
-    this->declare_parameter<std::vector<int64_t>>("lb_contact_phases", {1, 1, 1, 1, 1, 0, 1, 1});
-    this->declare_parameter<float>("overlap_time", 0.0);
-    this->declare_parameter<float>("swing_time", 0.36);
-    this->declare_parameter<float>("foot_height_time_constant", 0.02);
-    this->declare_parameter<std::vector<int64_t>>("body_shift_phases", {1, 2, 3, 4, 5, 6, 7, 8});
-    this->declare_parameter<float>("fwd_body_balance_shift", 0.035);
-    this->declare_parameter<float>("back_body_balance_shift", 0.005);
-    this->declare_parameter<float>("side_body_balance_shift", 0.015);
-    this->declare_parameter<bool>("publish_odom", true);
-    this->declare_parameter<float>("lidar_x_pos", 0.045);
-    this->declare_parameter<float>("lidar_y_pos", 0.0);
-    this->declare_parameter<float>("lidar_z_pos", 0.085);
-    this->declare_parameter<float>("lidar_yaw_angle", 180);
+    // this->declare_parameter<float>("hip_link_length", 0.055);
+    // this->declare_parameter<float>("upper_leg_link_length", 0.1075);
+    // this->declare_parameter<float>("lower_leg_link_length", 0.130);
+    // this->declare_parameter<float>("body_width", 0.078);
+    // this->declare_parameter<float>("body_length", 0.186);
+    // this->declare_parameter<float>("default_stand_height", 0.155);
+    // this->declare_parameter<float>("stand_front_x_offset", 0.015);
+    // this->declare_parameter<float>("stand_back_x_offset", -0.000);
+    // this->declare_parameter<float>("lie_down_height", 0.083);
+    // this->declare_parameter<float>("lie_down_foot_x_offset", 0.065);
+    // this->declare_parameter<int>("num_servos", 12);
+    // this->declare_parameter<float>("servo_max_angle_deg", 82.5);
+    // this->declare_parameter<float>("transit_tau", 0.3);
+    // this->declare_parameter<float>("transit_rl", 0.06);
+    // this->declare_parameter<float>("transit_angle_rl", 0.35);
+    // this->declare_parameter<float>("dt", 0.02);
+    // this->declare_parameter<bool>("debug_mode", false);
+    // this->declare_parameter<bool>("run_standalone", false);
+    // this->declare_parameter<bool>("plot_mode", false);
+    // this->declare_parameter<float>("max_fwd_velocity", 0.4);
+    // this->declare_parameter<float>("max_side_velocity", 0.4);
+    // this->declare_parameter<float>("max_yaw_rate", 0.35);
+    // this->declare_parameter<float>("z_clearance", 0.050);
+    // this->declare_parameter<float>("alpha", 0.5);
+    // this->declare_parameter<float>("beta", 0.5);
+    // this->declare_parameter<int>("num_phases", 8);
+    // this->declare_parameter<std::vector<int64_t>>("rb_contact_phases", {1, 0, 1, 1, 1, 1, 1, 1});
+    // this->declare_parameter<std::vector<int64_t>>("rf_contact_phases", {1, 1, 1, 0, 1, 1, 1, 1});
+    // this->declare_parameter<std::vector<int64_t>>("lf_contact_phases", {1, 1, 1, 1, 1, 1, 1, 0});
+    // this->declare_parameter<std::vector<int64_t>>("lb_contact_phases", {1, 1, 1, 1, 1, 0, 1, 1});
+    // this->declare_parameter<float>("overlap_time", 0.0);
+    // this->declare_parameter<float>("swing_time", 0.36);
+    // this->declare_parameter<float>("foot_height_time_constant", 0.02);
+    // this->declare_parameter<std::vector<int64_t>>("body_shift_phases", {1, 2, 3, 4, 5, 6, 7, 8});
+    // this->declare_parameter<float>("fwd_body_balance_shift", 0.035);
+    // this->declare_parameter<float>("back_body_balance_shift", 0.005);
+    // this->declare_parameter<float>("side_body_balance_shift", 0.015);
+    // this->declare_parameter<bool>("publish_odom", true);
+    // this->declare_parameter<float>("lidar_x_pos", 0.045);
+    // this->declare_parameter<float>("lidar_y_pos", 0.0);
+    // this->declare_parameter<float>("lidar_z_pos", 0.085);
+    // this->declare_parameter<float>("lidar_yaw_angle", 180);
 
     // Read in and save parameters
     // Use private node handle for getting params so just the relative
@@ -414,14 +416,14 @@ void SpotMicroMotionCmd::readInConfigParameters() {
     this->get_parameter("alpha", smnc_.alpha);
     this->get_parameter("beta", smnc_.beta);
     this->get_parameter("num_phases", smnc_.num_phases);
-    this->get_parameter("rb_contact_phases", smnc_.rb_contact_phases);
-    this->get_parameter("rf_contact_phases", smnc_.rf_contact_phases);
-    this->get_parameter("lf_contact_phases", smnc_.lf_contact_phases);
-    this->get_parameter("lb_contact_phases", smnc_.lb_contact_phases);
+    // this->get_parameter("rb_contact_phases", smnc_.rb_contact_phases);
+    // this->get_parameter("rf_contact_phases", smnc_.rf_contact_phases);
+    // this->get_parameter("lf_contact_phases", smnc_.lf_contact_phases);
+    // this->get_parameter("lb_contact_phases", smnc_.lb_contact_phases);
     this->get_parameter("overlap_time", smnc_.overlap_time);
     this->get_parameter("swing_time", smnc_.swing_time);
     this->get_parameter("foot_height_time_constant", smnc_.foot_height_time_constant);
-    this->get_parameter("body_shift_phases", smnc_.body_shift_phases);
+    // this->get_parameter("body_shift_phases", smnc_.body_shift_phases);
     this->get_parameter("fwd_body_balance_shift", smnc_.fwd_body_balance_shift);
     this->get_parameter("back_body_balance_shift", smnc_.back_body_balance_shift);
     this->get_parameter("side_body_balance_shift", smnc_.side_body_balance_shift);
@@ -463,10 +465,10 @@ void SpotMicroMotionCmd::readInConfigParameters() {
     // the servo config map in smnc_
     for (std::map<std::string, float>::iterator iter = servo_cmds_rad_.begin(); iter != servo_cmds_rad_.end(); ++iter) {
 
-        std::string servo_name = iter->first;                      // Get key, string of the servo name
-        this->declare_parameters<float>(servo_name, servo_config); // Declare servo config parameters
-        this->get_parameters(servo_name, temp_map);                // Read the parameter. Parameter name must match servo name
-        smnc_.servo_config[servo_name] = temp_map;                 // Assing in servo config to map in the struct
+        std::string servo_name = iter->first; // Get key, string of the servo name
+        // this->declare_parameters<float>(servo_name, servo_config); // Declare servo config parameters
+        // this->get_parameters(servo_name, temp_map); // Read the parameter. Parameter name must match servo name
+        smnc_.servo_config[servo_name] = temp_map; // Assing in servo config to map in the struct
     }
 }
 
