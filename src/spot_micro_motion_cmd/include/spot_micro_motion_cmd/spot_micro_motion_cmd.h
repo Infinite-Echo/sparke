@@ -81,9 +81,6 @@ class SpotMicroMotionCmd : public rclcpp::Node {
     // Main loop runner, called periodically at the loop rate
     void runOnce();
 
-    // Publish a servo configuration message
-    bool publishServoConfiguration();
-
     // Set servo proprotional message data
     void setServoCommandMessageData();
 
@@ -163,7 +160,6 @@ class SpotMicroMotionCmd : public rclcpp::Node {
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr lcd_vel_cmd_pub_;
     rclcpp::Publisher<geometry_msgs::msg::Vector3>::SharedPtr lcd_angle_cmd_pub_;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr lcd_state_pub_;
-    rclcpp::Client<i2c_interfaces::srv::ServosConfig>::SharedPtr servos_config_client_;
     std::unique_ptr<tf2_ros::TransformBroadcaster> transform_br_;
     std::shared_ptr<tf2_ros::StaticTransformBroadcaster> static_transform_br_;
 

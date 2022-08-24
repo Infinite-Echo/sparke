@@ -107,9 +107,6 @@ SpotMicroMotionCmd::SpotMicroMotionCmd(rclcpp::NodeOptions options)
     // Servos proportional publisher
     servos_proportional_pub_ = this->create_publisher<i2c_interfaces::msg::ServoArray>("servos_proportional", 1);
 
-    // Servos configuration publisher
-    servos_config_client_ = this->create_client<i2c_interfaces::srv::ServosConfig>("config_servos");
-
     // Body state publisher for plotting
     body_state_pub_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("body_state", 1);
 
@@ -188,61 +185,6 @@ void SpotMicroMotionCmd::runOnce() {
         // Integrate robot odometry
         integrateOdometry();
     }
-}
-
-bool SpotMicroMotionCmd::publishServoConfiguration() {
-    // Create a temporary servo config
-    return true;
-
-    i2c_interfaces::msg::ServoConfig temp_servo_config;
-    auto temp_servo_config_array = std::make_shared<i2c_interfaces::srv::ServosConfig::Request>();
-
-    // Loop through servo configuration dictionary in smnc_, append servo to
-    for (std::map<std::string, std::map<std::string, float>>::iterator iter = smnc_.servo_config.begin(); iter != smnc_.servo_config.end(); ++iter) {
-
-        std::map<std::string, float> servo_config_params = iter->second;
-        temp_servo_config.center = servo_config_params["center"];
-        temp_servo_config.range = servo_config_params["range"];
-        temp_servo_config.servo = servo_config_params["num"];
-        temp_servo_config.direction = servo_config_params["direction"];
-
-        // Append to temp_servo_config_array
-        temp_servo_config_array->servos.push_back(temp_servo_config);
-    }
-
-    // The vision client needs to wait until the service appears
-    while (!servos_config_client_->wait_for_service(500ms)) {
-        if (!rclcpp::ok()) {
-            RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "client interrupted while waiting for service to appear.");
-            return false;
-        }
-        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "waiting for service to appear...");
-    }
-
-    auto future = servos_config_client_->async_send_request(temp_servo_config_array);
-    if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), future) != rclcpp::FutureReturnCode::SUCCESS) {
-        RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Failed to receive servos_config service response");
-        return false;
-    }
-
-    auto result = future.get();
-    if (!result->error) {
-        RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "servos_config service failed");
-        return false;
-    }
-
-    // // call the client service, return true if succesfull, false if not
-    // if (!servos_config_client_->async_send_request(temp_servo_config_array).get()) {
-    //     if (!smnc_.debug_mode && !smnc_.run_standalone) {
-    //         // Only error out if not in debug mode or standalone mode
-    //         RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Failed to call service servo_config");
-    //         return false;
-    //     }
-    // }
-
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "servo_config service called successfully");
-
-    return true;
 }
 
 void SpotMicroMotionCmd::setServoCommandMessageData() {
@@ -343,53 +285,6 @@ void SpotMicroMotionCmd::commandIdle() { cmd_.idle_cmd_ = true; }
 std::string SpotMicroMotionCmd::getCurrentStateName() { return state_->getCurrentStateName(); }
 
 void SpotMicroMotionCmd::readInConfigParameters() {
-    // this->declare_parameter<float>("hip_link_length", 0.055);
-    // this->declare_parameter<float>("upper_leg_link_length", 0.1075);
-    // this->declare_parameter<float>("lower_leg_link_length", 0.130);
-    // this->declare_parameter<float>("body_width", 0.078);
-    // this->declare_parameter<float>("body_length", 0.186);
-    // this->declare_parameter<float>("default_stand_height", 0.155);
-    // this->declare_parameter<float>("stand_front_x_offset", 0.015);
-    // this->declare_parameter<float>("stand_back_x_offset", -0.000);
-    // this->declare_parameter<float>("lie_down_height", 0.083);
-    // this->declare_parameter<float>("lie_down_foot_x_offset", 0.065);
-    // this->declare_parameter<int>("num_servos", 12);
-    // this->declare_parameter<float>("servo_max_angle_deg", 82.5);
-    // this->declare_parameter<float>("transit_tau", 0.3);
-    // this->declare_parameter<float>("transit_rl", 0.06);
-    // this->declare_parameter<float>("transit_angle_rl", 0.35);
-    // this->declare_parameter<float>("dt", 0.02);
-    // this->declare_parameter<bool>("debug_mode", false);
-    // this->declare_parameter<bool>("run_standalone", false);
-    // this->declare_parameter<bool>("plot_mode", false);
-    // this->declare_parameter<float>("max_fwd_velocity", 0.4);
-    // this->declare_parameter<float>("max_side_velocity", 0.4);
-    // this->declare_parameter<float>("max_yaw_rate", 0.35);
-    // this->declare_parameter<float>("z_clearance", 0.050);
-    // this->declare_parameter<float>("alpha", 0.5);
-    // this->declare_parameter<float>("beta", 0.5);
-    // this->declare_parameter<int>("num_phases", 8);
-    // this->declare_parameter<std::vector<int64_t>>("rb_contact_phases", {1, 0, 1, 1, 1, 1, 1, 1});
-    // this->declare_parameter<std::vector<int64_t>>("rf_contact_phases", {1, 1, 1, 0, 1, 1, 1, 1});
-    // this->declare_parameter<std::vector<int64_t>>("lf_contact_phases", {1, 1, 1, 1, 1, 1, 1, 0});
-    // this->declare_parameter<std::vector<int64_t>>("lb_contact_phases", {1, 1, 1, 1, 1, 0, 1, 1});
-    // this->declare_parameter<float>("overlap_time", 0.0);
-    // this->declare_parameter<float>("swing_time", 0.36);
-    // this->declare_parameter<float>("foot_height_time_constant", 0.02);
-    // this->declare_parameter<std::vector<int64_t>>("body_shift_phases", {1, 2, 3, 4, 5, 6, 7, 8});
-    // this->declare_parameter<float>("fwd_body_balance_shift", 0.035);
-    // this->declare_parameter<float>("back_body_balance_shift", 0.005);
-    // this->declare_parameter<float>("side_body_balance_shift", 0.015);
-    // this->declare_parameter<bool>("publish_odom", true);
-    // this->declare_parameter<float>("lidar_x_pos", 0.045);
-    // this->declare_parameter<float>("lidar_y_pos", 0.0);
-    // this->declare_parameter<float>("lidar_z_pos", 0.085);
-    // this->declare_parameter<float>("lidar_yaw_angle", 180);
-
-    // Read in and save parameters
-    // Use private node handle for getting params so just the relative
-    // parameter name can be used (as opposed to the global name, e.g.:
-    // /spot_micro_motion_cmd/param1
     this->get_parameter("hip_link_length", smnc_.smc.hip_link_length);
     this->get_parameter("upper_leg_link_length", smnc_.smc.upper_leg_link_length);
     this->get_parameter("lower_leg_link_length", smnc_.smc.lower_leg_link_length);
@@ -416,14 +311,14 @@ void SpotMicroMotionCmd::readInConfigParameters() {
     this->get_parameter("alpha", smnc_.alpha);
     this->get_parameter("beta", smnc_.beta);
     this->get_parameter("num_phases", smnc_.num_phases);
-    // this->get_parameter("rb_contact_phases", smnc_.rb_contact_phases);
-    // this->get_parameter("rf_contact_phases", smnc_.rf_contact_phases);
-    // this->get_parameter("lf_contact_phases", smnc_.lf_contact_phases);
-    // this->get_parameter("lb_contact_phases", smnc_.lb_contact_phases);
+    this->get_parameter("rb_contact_phases", smnc_.rb_contact_phases);
+    this->get_parameter("rf_contact_phases", smnc_.rf_contact_phases);
+    this->get_parameter("lf_contact_phases", smnc_.lf_contact_phases);
+    this->get_parameter("lb_contact_phases", smnc_.lb_contact_phases);
     this->get_parameter("overlap_time", smnc_.overlap_time);
     this->get_parameter("swing_time", smnc_.swing_time);
     this->get_parameter("foot_height_time_constant", smnc_.foot_height_time_constant);
-    // this->get_parameter("body_shift_phases", smnc_.body_shift_phases);
+    this->get_parameter("body_shift_phases", smnc_.body_shift_phases);
     this->get_parameter("fwd_body_balance_shift", smnc_.fwd_body_balance_shift);
     this->get_parameter("back_body_balance_shift", smnc_.back_body_balance_shift);
     this->get_parameter("side_body_balance_shift", smnc_.side_body_balance_shift);
@@ -432,6 +327,7 @@ void SpotMicroMotionCmd::readInConfigParameters() {
     this->get_parameter("lidar_y_pos", smnc_.lidar_y_pos);
     this->get_parameter("lidar_z_pos", smnc_.lidar_z_pos);
     this->get_parameter("lidar_yaw_angle", smnc_.lidar_yaw_angle);
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "All params loaded successfully!");
 
     // Derived parameters, round result of division of floats
     smnc_.overlap_ticks = round(smnc_.overlap_time / smnc_.dt);
@@ -453,22 +349,24 @@ void SpotMicroMotionCmd::readInConfigParameters() {
         smnc_.phase_length = 2 * smnc_.swing_ticks + 2 * smnc_.overlap_ticks;
     }
 
-    // Declare servo config parameters
-    std::map<std::string, float> servo_config{
-        {"num", 1}, {"center", 306}, {"range", 372}, {"direction", 1}, {"center_angle_deg", 88.2},
+    std::map<int, std::string> servo_config_name = {
+        {1, "RF_3"}, {2, "RF_2"}, {3, "RF_1"}, {4, "RB_3"},  {5, "RB_2"},  {6, "RB_1"},
+        {7, "LB_3"}, {8, "LB_2"}, {9, "LB_1"}, {10, "LF_3"}, {11, "LF_2"}, {12, "LF_1"},
     };
+    std::map<int, std::string> servo_param_name = {{1, "num"}, {2, "center"}, {3, "range"}, {4, "direction"}, {5, "center_angle_deg"}};
 
-    // Temporary map for populating map in smnc_
-    std::map<std::string, float> temp_map;
-
-    // Iterate over servo names, as defined in the map servo_cmds_rad, to populate
-    // the servo config map in smnc_
-    for (std::map<std::string, float>::iterator iter = servo_cmds_rad_.begin(); iter != servo_cmds_rad_.end(); ++iter) {
-
-        std::string servo_name = iter->first; // Get key, string of the servo name
-        // this->declare_parameters<float>(servo_name, servo_config); // Declare servo config parameters
-        // this->get_parameters(servo_name, temp_map); // Read the parameter. Parameter name must match servo name
-        smnc_.servo_config[servo_name] = temp_map; // Assing in servo config to map in the struct
+    for (int i = 0; i < smnc_.num_servos; i++) {
+        float temp_config_holder[5];
+        for (int j = 0; j < 5; j++) {
+            std::stringstream param_name;
+            param_name << servo_config_name[i + 1] << "." << servo_param_name[j + 1];
+            this->get_parameter(param_name.str(), temp_config_holder[j]);
+        }
+        std::map<std::string, float> temp_servo_config{
+            {"num", temp_config_holder[0]},       {"center", temp_config_holder[1]},           {"range", temp_config_holder[2]},
+            {"direction", temp_config_holder[3]}, {"center_angle_deg", temp_config_holder[4]},
+        };
+        smnc_.servo_config[servo_config_name[i + 1]] = temp_servo_config;
     }
 }
 

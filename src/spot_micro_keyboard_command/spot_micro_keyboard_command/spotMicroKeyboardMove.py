@@ -3,6 +3,7 @@
 """
 Class for sending keyboard commands to spot micro walk node, control velocity, yaw rate, and walk event 
 """
+import threading
 import rclpy
 from rclpy.node import Node
 import sys, select, termios, tty  # For terminal keyboard key press reading
@@ -55,17 +56,17 @@ class SpotMicroKeyboardControl(Node):
         # Set up and title the ros node for this code
         super().__init__("spot_micro_keyboard_control")
         self._angle_cmd_msg = Vector3()
-        self._angle_cmd_msg.x = 0
-        self._angle_cmd_msg.y = 0
-        self._angle_cmd_msg.z = 0
+        self._angle_cmd_msg.x = 0.0
+        self._angle_cmd_msg.y = 0.0
+        self._angle_cmd_msg.z = 0.0
 
         self._vel_cmd_msg = Twist()
-        self._vel_cmd_msg.linear.x = 0
-        self._vel_cmd_msg.linear.y = 0
-        self._vel_cmd_msg.linear.z = 0
-        self._vel_cmd_msg.angular.x = 0
-        self._vel_cmd_msg.angular.y = 0
-        self._vel_cmd_msg.angular.z = 0
+        self._vel_cmd_msg.linear.x = 0.0
+        self._vel_cmd_msg.linear.y = 0.0
+        self._vel_cmd_msg.linear.z = 0.0
+        self._vel_cmd_msg.angular.x = 0.0
+        self._vel_cmd_msg.angular.y = 0.0
+        self._vel_cmd_msg.angular.z = 0.0
 
         self._walk_event_cmd_msg = Bool()
         self._walk_event_cmd_msg.data = (
@@ -99,21 +100,21 @@ class SpotMicroKeyboardControl(Node):
     def reset_all_motion_commands_to_zero(self):
         """Reset body motion cmd states to zero and publish zero value body motion commands"""
 
-        self._vel_cmd_msg.linear.x = 0
-        self._vel_cmd_msg.linear.y = 0
-        self._vel_cmd_msg.linear.z = 0
-        self._vel_cmd_msg.angular.x = 0
-        self._vel_cmd_msg.angular.y = 0
-        self._vel_cmd_msg.angular.z = 0
+        self._vel_cmd_msg.linear.x = 0.0
+        self._vel_cmd_msg.linear.y = 0.0
+        self._vel_cmd_msg.linear.z = 0.0
+        self._vel_cmd_msg.angular.x = 0.0
+        self._vel_cmd_msg.angular.y = 0.0
+        self._vel_cmd_msg.angular.z = 0.0
 
         self._ros_pub_vel_cmd.publish(self._vel_cmd_msg)
 
     def reset_all_angle_commands_to_zero(self):
         """Reset angle cmd states to zero and publish them"""
 
-        self._angle_cmd_msg.x = 0
-        self._angle_cmd_msg.y = 0
-        self._angle_cmd_msg.z = 0
+        self._angle_cmd_msg.x = 0.0
+        self._angle_cmd_msg.y = 0.0
+        self._angle_cmd_msg.z = 0.0
 
         self._ros_pub_angle_cmd.publish(self._angle_cmd_msg)
 
@@ -130,7 +131,7 @@ class SpotMicroKeyboardControl(Node):
         self.get_logger().info("Main keyboard control loop started.")
 
         # Main loop
-        while self.ok():
+        while rclpy.ok():
             # Prompt user with keyboard command information, and wait for input keystroke
             print(msg)
             userInput = input("Command?: ")
@@ -295,9 +296,9 @@ class SpotMicroKeyboardControl(Node):
                                 self._ros_pub_vel_cmd.publish(self._vel_cmd_msg)
 
                             elif userInput == "f":
-                                self._vel_cmd_msg.linear.x = 0
-                                self._vel_cmd_msg.linear.y = 0
-                                self._vel_cmd_msg.angular.z = 0
+                                self._vel_cmd_msg.linear.x = 0.0
+                                self._vel_cmd_msg.linear.y = 0.0
+                                self._vel_cmd_msg.angular.z = 0.0
 
                                 self._ros_pub_vel_cmd.publish(self._vel_cmd_msg)
                                 self.get_logger().info(
@@ -305,6 +306,15 @@ class SpotMicroKeyboardControl(Node):
                                 )
 
 
-if __name__ == "__main__":
+def main(args=None):
+    rclpy.init(args=args)
     smkc = SpotMicroKeyboardControl()
+    thread = threading.Thread(target=rclpy.spin, args=(smkc,), daemon=True)
+    thread.start()
     smkc.run()
+    thread.join()
+    rclpy.shutdown()
+
+
+if __name__ == "__main__":
+    main()
