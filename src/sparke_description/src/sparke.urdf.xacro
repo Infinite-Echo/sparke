@@ -13,15 +13,15 @@
 	<xacro:property name="leg_width" value="0.040"/>
   <xacro:property name="leg_height" value="0.027"/>
   
-  <xacro:property name="wrist_joint_radius" value="0.125"/>
-	<xacro:property name="wrist_joint_width" value="0.040"/>
+  <xacro:property name="elbow_radius" value="0.0135"/>
+	<xacro:property name="elbow_width" value="0.040"/>
 
   <xacro:property name="wrist_length" value="0.135"/>
 	<xacro:property name="wrist_width" value="0.0325"/>
   <xacro:property name="wrist_height" value="0.015"/>
 
   <xacro:property name="foot_radius" value="0.015"/>
-	<xacro:property name="foot_width" value="0.01"/>
+	<xacro:property name="foot_width" value="0.0325"/>
 
 
 	<!-- Robot Base -->
@@ -30,8 +30,8 @@
       <geometry>
         <box size="${base_length} ${base_width} ${base_height}"/>
       </geometry>
-      <material name="Cyan">
-        <color rgba="0.0 1.0 1.0 1.0"/>
+      <material name="Body">
+        <color rgba="0 0.5 0.5 1"/>
       </material>
     </visual>
   </link>
@@ -53,8 +53,8 @@
         <geometry>
             <box size="${shoulder_length} ${shoulder_width} ${shoulder_height}"/>
         </geometry>
-        <material name="Gray">
-          <color rgba="0.5 0.5 0.5 1.0"/>
+        <material name="Shoulder">
+          <color rgba="0 0.6 0.6 1.0"/>
         </material>
       </visual>
     </link>
@@ -75,7 +75,7 @@
         <geometry>
             <box size="${leg_length} ${leg_width} ${leg_height}"/>
         </geometry>
-        <material name="Gray">
+        <material name="Body">
           <color rgba="0.5 0.5 0.5 1.0"/>
         </material>
       </visual>
@@ -84,9 +84,69 @@
     <joint name="${prefix}_leg_joint" type="fixed">
       <parent link="${prefix}_shoulder_link"/>
       <child link="${prefix}_leg_link"/>
-      <origin xyz="${(x_pos - (leg_length/25)) * x_reflect} ${(y_pos + (leg_width/2)) * y_reflect} ${z_pos - (leg_height/2)}" rpy="0 0 0"/>
+      <origin xyz="${(x_pos - (leg_length/25)) * x_reflect} ${(y_pos + (leg_width/2)) * y_reflect} ${z_pos - (leg_height/2)}" rpy="0 ${-pi/4} 0"/>
       <axis xyz="0 1 0"/>
     </joint>
+
+    <link name="${prefix}_elbow_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
+        <geometry>
+            <cylinder radius="${elbow_radius}" length="${elbow_width}"/>
+        </geometry>
+        <material name="Body">
+          <color rgba="0.5 0.5 0.5 1.0"/>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="${prefix}_elbow_joint" type="fixed">
+      <parent link="${prefix}_leg_link"/>
+      <child link="${prefix}_elbow_link"/>
+      <origin xyz="${-leg_length/2} 0 0" rpy="0 0 ${pi/2}"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- Wrists -->
+  <xacro:macro name="wrist" params="prefix x_reflect y_reflect x_pos y_pos z_pos">
+    <link name="${prefix}_wrist_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+            <box size="${wrist_length} ${wrist_width} ${wrist_height}"/>
+        </geometry>
+        <material name="Gray">
+          <color rgba="0.5 0.5 0.5 1.0"/>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="${prefix}_wrist_joint" type="fixed">
+      <parent link="${prefix}_elbow_link"/>
+      <child link="${prefix}_wrist_link"/>
+      <origin xyz="0 0 ${-wrist_length/2}" rpy="0 ${pi/2} ${pi/2}"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+
+    <link name="${prefix}_foot_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+            <cylinder radius="${foot_radius}" length="${foot_width+0.001}"/>
+        </geometry>
+        <material>
+          <color rgba="0.1 0.1 0.1 1"/>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="${prefix}_foot_joint" type="fixed">
+      <parent link="${prefix}_wrist_link"/>
+      <child link="${prefix}_foot_link"/>
+      <origin xyz="${wrist_length/2} 0 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <axis xyz="0 1 0"/>
+    </joint>    
   </xacro:macro>
 
   <xacro:shoulder prefix="fl" x_reflect="1" y_reflect="1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/>
@@ -94,6 +154,14 @@
   <xacro:shoulder prefix="br" x_reflect="-1" y_reflect="-1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/>
   <xacro:shoulder prefix="bl" x_reflect="-1" y_reflect="1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/>
 
-  <!-- <xacro:leg prefix="fl_leg" x_reflect="1" y_reflect="1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/> -->
+  <xacro:leg prefix="fl" x_reflect="1" y_reflect="1" x_pos="${-(leg_length/2)+(shoulder_length*0.9)}" y_pos="${-leg_width/2}" z_pos="${-(leg_length/4)-(shoulder_height/4)}"/>
+  <xacro:leg prefix="fr" x_reflect="1" y_reflect="1" x_pos="${-(leg_length/2)+(shoulder_length*0.9)}" y_pos="${-leg_width/2}" z_pos="${-(leg_length/4)-(shoulder_height/4)}"/>
+  <xacro:leg prefix="br" x_reflect="1" y_reflect="1" x_pos="${-(leg_length/2)+(shoulder_length*0.9)}" y_pos="${-leg_width/2}" z_pos="${-(leg_length/4)-(shoulder_height/4)}"/>
+  <xacro:leg prefix="bl" x_reflect="1" y_reflect="1" x_pos="${-(leg_length/2)+(shoulder_length*0.9)}" y_pos="${-leg_width/2}" z_pos="${-(leg_length/4)-(shoulder_height/4)}"/>
+
+  <xacro:wrist prefix="fl" x_reflect="1" y_reflect="1" x_pos="0" y_pos="0" z_pos="0"/>
+  <xacro:wrist prefix="fr" x_reflect="1" y_reflect="1" x_pos="0" y_pos="0" z_pos="0"/>
+  <xacro:wrist prefix="br" x_reflect="1" y_reflect="1" x_pos="0" y_pos="0" z_pos="0"/>
+  <xacro:wrist prefix="bl" x_reflect="1" y_reflect="1" x_pos="0" y_pos="0" z_pos="0"/>
 
 </robot>
