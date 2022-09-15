@@ -9,9 +9,19 @@
 	<xacro:property name="shoulder_width" value="0.0635"/>
   <xacro:property name="shoulder_height" value="0.013"/>
 
-  <xacro:property name="leg_length" value="0.01"/>
-	<xacro:property name="leg_width" value="0.01"/>
-  <xacro:property name="leg_height" value="0.01"/>
+  <xacro:property name="leg_length" value="0.125"/>
+	<xacro:property name="leg_width" value="0.040"/>
+  <xacro:property name="leg_height" value="0.027"/>
+  
+  <xacro:property name="wrist_joint_radius" value="0.125"/>
+	<xacro:property name="wrist_joint_width" value="0.040"/>
+
+  <xacro:property name="wrist_length" value="0.135"/>
+	<xacro:property name="wrist_width" value="0.0325"/>
+  <xacro:property name="wrist_height" value="0.015"/>
+
+  <xacro:property name="foot_radius" value="0.015"/>
+	<xacro:property name="foot_width" value="0.01"/>
 
 
 	<!-- Robot Base -->
@@ -37,7 +47,7 @@
 
   <!-- Shoulders -->
   <xacro:macro name="shoulder" params="prefix x_reflect y_reflect x_pos y_pos z_pos">
-    <link name="${prefix}_link">
+    <link name="${prefix}_shoulder_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
@@ -51,7 +61,7 @@
 
     <joint name="${prefix}_joint" type="fixed">
       <parent link="base_link"/>
-      <child link="${prefix}_link"/>
+      <child link="${prefix}_shoulder_link"/>
       <origin xyz="${(x_pos - (shoulder_length/25)) * x_reflect} ${(y_pos + (shoulder_width/2)) * y_reflect} ${z_pos - (shoulder_height/2)}" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
     </joint>
@@ -59,7 +69,7 @@
 
   <!-- Legs -->
   <xacro:macro name="leg" params="prefix x_reflect y_reflect x_pos y_pos z_pos">
-    <link name="${prefix}_link">
+    <link name="${prefix}_leg_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
@@ -71,18 +81,18 @@
       </visual>
     </link>
 
-    <joint name="${prefix}_joint" type="fixed">
-      <parent link="base_link"/>
-      <child link="${prefix}_link"/>
+    <joint name="${prefix}_leg_joint" type="fixed">
+      <parent link="${prefix}_shoulder_link"/>
+      <child link="${prefix}_leg_link"/>
       <origin xyz="${(x_pos - (leg_length/25)) * x_reflect} ${(y_pos + (leg_width/2)) * y_reflect} ${z_pos - (leg_height/2)}" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
     </joint>
   </xacro:macro>
 
-  <xacro:shoulder prefix="fl_shoulder" x_reflect="1" y_reflect="1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/>
-  <xacro:shoulder prefix="fr_shoulder" x_reflect="1" y_reflect="-1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/>
-  <xacro:shoulder prefix="br_shoulder" x_reflect="-1" y_reflect="-1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/>
-  <xacro:shoulder prefix="bl_shoulder" x_reflect="-1" y_reflect="1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/>
+  <xacro:shoulder prefix="fl" x_reflect="1" y_reflect="1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/>
+  <xacro:shoulder prefix="fr" x_reflect="1" y_reflect="-1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/>
+  <xacro:shoulder prefix="br" x_reflect="-1" y_reflect="-1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/>
+  <xacro:shoulder prefix="bl" x_reflect="-1" y_reflect="1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/>
 
   <!-- <xacro:leg prefix="fl_leg" x_reflect="1" y_reflect="1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/> -->
 
