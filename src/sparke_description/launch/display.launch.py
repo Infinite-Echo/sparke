@@ -10,6 +10,7 @@ def generate_launch_description():
     ).find("sparke_description")
     default_model_path = os.path.join(pkg_share, "src/sparke.urdf.xacro")
     default_rviz_config_path = os.path.join(pkg_share, "rviz/urdf_config.rviz")
+    default_world_path = os.path.join(pkg_share, "src/sparke-test-world.world")
 
     robot_state_publisher_node = launch_ros.actions.Node(
         package="robot_state_publisher",
@@ -57,8 +58,14 @@ def generate_launch_description():
                     "libgazebo_ros_init.so",
                     "-s",
                     "libgazebo_ros_factory.so",
+                    default_world_path
                 ],
                 output="screen",
+            ),
+            launch.actions.DeclareLaunchArgument(
+                name='world',
+                default_value=default_world_path,
+                description='Full path to the world model file to load'
             ),
             joint_state_publisher_node,
             robot_state_publisher_node,
