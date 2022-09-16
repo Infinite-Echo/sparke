@@ -9,7 +9,7 @@ def generate_launch_description():
         package="sparke_description"
     ).find("sparke_description")
     default_model_path = os.path.join(pkg_share, "src/sparke.urdf.xacro")
-    default_rviz_config_path = os.path.join(pkg_share, "rviz/urdf_config.rviz")
+    default_rviz_config_path = os.path.join(pkg_share, "rviz/nav2_rviz_config.rviz")
     default_world_path = os.path.join(pkg_share, "src/sparke-test-world.world")
 
     robot_state_publisher_node = launch_ros.actions.Node(
