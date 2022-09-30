@@ -34,7 +34,7 @@ def generate_launch_description():
     spawn_entity = launch_ros.actions.Node(
         package="gazebo_ros",
         executable="spawn_entity.py",
-        arguments=["-entity", "sam_bot", "-topic", "robot_description"],
+        arguments=["-entity", "sparke", "-topic", "robot_description"],
         output="screen",
     )
 
@@ -58,14 +58,14 @@ def generate_launch_description():
                     "libgazebo_ros_init.so",
                     "-s",
                     "libgazebo_ros_factory.so",
-                    default_world_path
+                    default_world_path,
                 ],
                 output="screen",
             ),
             launch.actions.DeclareLaunchArgument(
-                name='world',
+                name="world",
                 default_value=default_world_path,
-                description='Full path to the world model file to load'
+                description="Full path to the world model file to load",
             ),
             joint_state_publisher_node,
             robot_state_publisher_node,
