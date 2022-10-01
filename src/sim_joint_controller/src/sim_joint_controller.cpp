@@ -36,20 +36,30 @@ int main(int argc, char * argv[])
   std_msgs::msg::Float64MultiArray commands;
 
   using namespace std::chrono_literals;
-
-  commands.data.push_back(0);
+  
+  commands.data.resize(4);
+  for(long unsigned int i=0; i<commands.data.size(); i++) {
+    commands.data[i] = 0;
+  }
   publisher->publish(commands);
   std::this_thread::sleep_for(1s);
 
-  commands.data[0] = 100;
+  for(long unsigned int i = 0; i<commands.data.size(); i++) {
+    commands.data[i] = 1000;
+  }
+  
   publisher->publish(commands);
   std::this_thread::sleep_for(1s);
 
-  commands.data[0] = -200;
+  for(long unsigned int i = 0; i<commands.data.size(); i++) {
+    commands.data[i] = -1000;
+  }
   publisher->publish(commands);
   std::this_thread::sleep_for(1s);
 
-  commands.data[0] = 0;
+  for(long unsigned int i = 0; i<commands.data.size(); i++) {
+    commands.data[i] = 0;
+  }
   publisher->publish(commands);
   std::this_thread::sleep_for(1s);
   rclcpp::shutdown();

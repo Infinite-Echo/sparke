@@ -12,6 +12,9 @@ effort_controllers:
   ros__parameters:
     joints:
       - fl_elbow_joint
+      - fr_elbow_joint
+      - bl_elbow_joint
+      - br_elbow_joint
     command_interfaces:
       - effort
     state_interfaces:
