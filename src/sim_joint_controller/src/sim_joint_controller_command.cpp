@@ -39,28 +39,17 @@ int main(int argc, char *argv[]) {
     for (long unsigned int i = 0; i < commands.data.size(); i++) {
         commands.data[i] = 0;
     }
-    publisher->publish(commands);
-    std::this_thread::sleep_for(1s);
 
-    for (long unsigned int i = 0; i < commands.data.size(); i++) {
-        commands.data[i] = 1000;
+    float x;
+    while (1) {
+        std::cout << "Enter float value: ";
+        std::cin >> x;
+
+        commands.data[3] = x;
+        publisher->publish(commands);
+        std::this_thread::sleep_for(1s);
     }
 
-    publisher->publish(commands);
-    std::this_thread::sleep_for(1s);
-
-    for (long unsigned int i = 0; i < commands.data.size(); i++) {
-        commands.data[i] = -1000;
-    }
-    publisher->publish(commands);
-    std::this_thread::sleep_for(1s);
-
-    for (long unsigned int i = 0; i < commands.data.size(); i++) {
-        commands.data[i] = 0;
-    }
-    commands.data[1] = 1000;
-    publisher->publish(commands);
-    std::this_thread::sleep_for(1s);
     rclcpp::shutdown();
 
     return 0;

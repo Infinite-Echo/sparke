@@ -31,6 +31,12 @@ ament_target_dependencies(sim_joint_controller
   std_msgs
 )
 
+add_executable(sim_joint_controller_command src/sim_joint_controller_command.cpp)
+ament_target_dependencies(sim_joint_controller_command
+  rclcpp
+  std_msgs
+)
+
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_lint_auto REQUIRED)
@@ -42,6 +48,7 @@ endif()
 install(
   TARGETS
     sim_joint_controller
+    sim_joint_controller_command
   DESTINATION
     lib/${PROJECT_NAME}
 )

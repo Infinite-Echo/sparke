@@ -58,12 +58,13 @@ def generate_launch_description():
         executable="robot_state_publisher",
         output="screen",
         parameters=[params],
+        arguments=["-use_sim_time", "true"],
     )
 
     spawn_entity = Node(
         package="gazebo_ros",
         executable="spawn_entity.py",
-        arguments=["-entity", "sparke", "-topic", "robot_description"],
+        arguments=["-entity", "sparke", "-topic", "robot_description", "-z", "0.179"],
         output="screen",
     )
 
@@ -86,7 +87,7 @@ def generate_launch_description():
             "load_controller",
             "--set-state",
             "start",
-            "effort_controllers",
+            "joint_trajectory_controller",
         ],
         output="screen",
     )
