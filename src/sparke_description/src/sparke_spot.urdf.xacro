@@ -112,7 +112,7 @@
       <child link="${prefix}_hip_link"/>
       <origin xyz="${(x_pos) * x_reflect} ${(y_pos) * y_reflect} ${z_pos-0.005}" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
-      <limit effort="1000" lower="-3.141592653589793" upper="3.141592653589793" velocity="1.5"/>
+      <limit effort="1000000" lower="-3.141592653589793" upper="3.141592653589793" velocity="1.5"/>
       
     </joint>
     <!-- <transmission name="${prefix}_hip_trans">
@@ -155,7 +155,7 @@
       <child link="${prefix}_shoulder_link"/>
       <origin xyz="0 ${(shoulder_width/2) * y_reflect} 0" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit effort="1000" lower="-3.141592653589793" upper="3.141592653589793" velocity="1.5"/>
+      <limit effort="1000000" lower="-3.141592653589793" upper="3.141592653589793" velocity="1.5"/>
       
     </joint>
 
@@ -236,7 +236,7 @@
       <child link="${prefix}_ankle_link"/>
       <origin xyz="${-leg_length/2} 0 0" rpy="0 0 ${pi/2}"/>
       <axis xyz="1 0 0"/>
-      <limit effort="1000" lower="-3.141592653589793" upper="3.141592653589793" velocity="1.5"/>
+      <limit effort="1000000" lower="-3.141592653589793" upper="3.141592653589793" velocity="1.5"/>
       
     </joint>
 
@@ -314,14 +314,14 @@
       <axis xyz="0 1 0"/>
     </joint>    
 
-    <gazebo reference="${prefix}_foot_link">
+    <!-- <gazebo reference="${prefix}_foot_link">
       <kp>10000000000.0</kp>
       <kd>100.0</kd>
       <mu1>0.8</mu1>
       <mu2>0.8</mu2>
       <minDepth>0.05</minDepth>
       <material>Gazebo/FlatBlack</material>
-    </gazebo>
+    </gazebo> -->
 
     <!-- <gazebo reference="${prefix}_foot_joint">
       <mu>50</mu>

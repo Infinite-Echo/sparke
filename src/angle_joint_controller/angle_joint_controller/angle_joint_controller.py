@@ -19,39 +19,45 @@ import rclpy
 from rclpy.node import Node
 from builtin_interfaces.msg import Duration
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+from i2c_interfaces.msg import ServoArray
+import time
 
 
 class TrajectoryPublisher(Node):
     def __init__(self):
         super().__init__("topic_desired_trajectory_publisher_node")
-
-        timer_period = 1
-        self.timer = self.create_timer(timer_period, self.timer_callback)
+        timer_period = 1.0
         self.trajectory_publisher = self.create_publisher(
             JointTrajectory, "/joint_group_effort_controller/joint_trajectory", 10
         )
+        self.initialize_msg()
+        self.servo_absolute_subscription = self.create_subscription(
+            ServoArray, "/servos_absolute", self.servos_absolute_callback, 10
+        )
+        self.servo_proportional_subscription = self.create_subscription(
+            ServoArray, "/servos_proportional", self.servos_absolute_callback, 10
+        )
+        self.timer = self.create_timer(timer_period, self.timer_callback)
 
-    def timer_callback(self):
-
-        # creating a point
-        goal_positions = [
-            1.0,
+    def initialize_msg(self):
+        initial_positions = [
             0.0,
             0.0,
             0.0,
-            1.0,
             0.0,
             0.0,
             0.0,
-            1.0,
+            0.0,
+            0.0,
+            0.0,
             0.0,
             0.0,
             0.0,
         ]
 
-        point_msg = JointTrajectoryPoint()
-        point_msg.positions = goal_positions
-        point_msg.time_from_start = Duration(sec=2)
+        self.point_msg = JointTrajectoryPoint()
+        self.point_msg.positions = initial_positions
+        self.point_msg.time_from_start = Duration(sec=1)
 
         # adding newly created point into trajectory message
         joints = [
@@ -69,11 +75,38 @@ class TrajectoryPublisher(Node):
             "bl_hip_joint",
         ]
 
-        my_trajectory_msg = JointTrajectory()
-        my_trajectory_msg.joint_names = joints
-        my_trajectory_msg.points.append(point_msg)
+        self.my_trajectory_msg = JointTrajectory()
+        self.my_trajectory_msg.joint_names = joints
+        self.my_trajectory_msg.points.append(self.point_msg)
+        # self.my_trajectory_msg.header.stamp = self.get_clock().now().to_msg()
+        self.trajectory_publisher.publish(self.my_trajectory_msg)
 
-        self.trajectory_publisher.publish(my_trajectory_msg)
+    def servos_absolute_callback(self, msg):
+        goal_positions = []
+        for x in range(12):
+            goal_positions.append(msg.servos[x].value)
+            print(msg.servos[x].value)
+            # self.get_logger().info(msg.servos[x].value)
+        self.point_msg.positions = goal_positions
+        self.my_trajectory_msg.points.append(self.point_msg)
+        # self.my_trajectory_msg.header.stamp = self.get_clock().now().to_msg()
+        # self.point_msg.time_from_start = Duration(nanosec=self.count)
+        # self.trajectory_publisher.publish(self.my_trajectory_msg)
+
+    def servos_proportional_callback(self, msg):
+        goal_positions = []
+        for x in range(12):
+            goal_positions.append(msg.servos[x].value)
+            # self.get_logger().info(msg.servos[x].value)
+        self.point_msg.positions = goal_positions
+        self.my_trajectory_msg.points.append(self.point_msg)
+        # self.my_trajectory_msg.header.stamp = self.get_clock().now().to_msg()
+        # self.point_msg.time_from_start = Duration(nanosec=self.count)
+        # self.trajectory_publisher.publish(self.my_trajectory_msg)
+
+    def timer_callback(self):
+        # self.my_trajectory_msg.header.stamp = self.get_clock().now().to_msg()
+        self.trajectory_publisher.publish(self.my_trajectory_msg)
 
 
 def main(args=None):
