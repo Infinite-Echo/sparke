@@ -25,7 +25,7 @@ from launch.actions import (
 )
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-
+from launch.substitutions import Command, LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 
 import xacro
@@ -46,19 +46,19 @@ def generate_launch_description():
     )
 
     xacro_file = os.path.join(
-        gazebo_ros2_control_demos_path, "src", "sparke.urdf.xacro"
+        gazebo_ros2_control_demos_path, "src", "sparke_spot.urdf.xacro"
     )
 
-    doc = xacro.parse(open(xacro_file))
-    xacro.process_doc(doc)
-    params = {"robot_description": doc.toxml()}
-
-    node_robot_state_publisher = Node(
+    robot_state_publisher_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
-        output="screen",
-        parameters=[params],
-        arguments=["-use_sim_time", "true"],
+        parameters=[
+            {"robot_description": Command(["xacro ", xacro_file])},
+            {"use_tf_static": False},
+            {"publish_frequency": 200.0},
+            {"ignore_timestamp": True},
+            {"use_sim_time": True},
+        ],
     )
 
     spawn_entity = Node(
@@ -75,19 +75,19 @@ def generate_launch_description():
             "load_controller",
             "--set-state",
             "start",
-            "joint_state_broadcaster",
+            "joint_states_controller",
         ],
         output="screen",
     )
 
-    load_joint_trajectory_controller = ExecuteProcess(
+    load_joint_trajectory1_controller = ExecuteProcess(
         cmd=[
             "ros2",
             "control",
             "load_controller",
             "--set-state",
             "start",
-            "joint_trajectory_controller",
+            "joint_group_effort_controller",
         ],
         output="screen",
     )
@@ -103,11 +103,11 @@ def generate_launch_description():
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=load_joint_state_controller,
-                    on_exit=[load_joint_trajectory_controller],
+                    on_exit=[load_joint_trajectory1_controller],
                 )
             ),
             gazebo,
-            node_robot_state_publisher,
+            robot_state_publisher_node,
             spawn_entity,
         ]
     )

@@ -28,7 +28,7 @@ class TrajectoryPublisher(Node):
         timer_period = 1
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.trajectory_publisher = self.create_publisher(
-            JointTrajectory, "/joint_trajectory_controller/joint_trajectory", 10
+            JointTrajectory, "/joint_group_effort_controller/joint_trajectory", 10
         )
 
     def timer_callback(self):
@@ -55,18 +55,18 @@ class TrajectoryPublisher(Node):
 
         # adding newly created point into trajectory message
         joints = [
-            "fl_b2s_joint",
-            "fr_b2s_joint",
-            "bl_b2s_joint",
-            "br_b2s_joint",
-            "fl_shoulder_joint",
+            "fr_ankle_joint",
             "fr_shoulder_joint",
-            "bl_shoulder_joint",
+            "fr_hip_joint",
+            "br_ankle_joint",
             "br_shoulder_joint",
-            "fl_elbow_joint",
-            "fr_elbow_joint",
-            "bl_elbow_joint",
-            "br_elbow_joint",
+            "br_hip_joint",
+            "fl_ankle_joint",
+            "fl_shoulder_joint",
+            "fl_hip_joint",
+            "bl_ankle_joint",
+            "bl_shoulder_joint",
+            "bl_hip_joint",
         ]
 
         my_trajectory_msg = JointTrajectory()
