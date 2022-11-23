@@ -26,7 +26,7 @@ import time
 class TrajectoryPublisher(Node):
     def __init__(self):
         super().__init__("topic_desired_trajectory_publisher_node")
-        timer_period = 1.0
+        timer_period = 1.1
         self.trajectory_publisher = self.create_publisher(
             JointTrajectory, "/joint_group_effort_controller/joint_trajectory", 10
         )
@@ -37,7 +37,7 @@ class TrajectoryPublisher(Node):
         self.servo_proportional_subscription = self.create_subscription(
             ServoArray, "/servos_proportional", self.servos_absolute_callback, 10
         )
-        self.timer = self.create_timer(timer_period, self.timer_callback)
+        # self.timer = self.create_timer(timer_period, self.timer_callback)
 
     def initialize_msg(self):
         initial_positions = [
