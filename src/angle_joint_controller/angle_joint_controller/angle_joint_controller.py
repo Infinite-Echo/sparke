@@ -51,12 +51,12 @@ class TrajectoryPublisher(Node):
             "br_ankle_joint",
             "br_shoulder_joint",
             "br_hip_joint",
-            "fl_ankle_joint",
-            "fl_shoulder_joint",
-            "fl_hip_joint",
             "bl_ankle_joint",
             "bl_shoulder_joint",
             "bl_hip_joint",
+            "fl_ankle_joint",
+            "fl_shoulder_joint",
+            "fl_hip_joint",
         ]
 
         self.my_trajectory_msg = JointTrajectory()

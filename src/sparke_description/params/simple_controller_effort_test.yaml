@@ -18,12 +18,12 @@ joint_group_effort_controller:
       - br_ankle_joint
       - br_shoulder_joint
       - br_hip_joint
-      - fl_ankle_joint
-      - fl_shoulder_joint
-      - fl_hip_joint
       - bl_ankle_joint
       - bl_shoulder_joint
       - bl_hip_joint
+      - fl_ankle_joint
+      - fl_shoulder_joint
+      - fl_hip_joint
     command_interfaces:
       - effort
     # https://github.com/rohitmenon86/ros2_controllers on galactic possible only with that fork

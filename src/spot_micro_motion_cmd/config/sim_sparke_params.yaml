@@ -23,18 +23,18 @@
     # Servo parameters
     num_servos: 12
     servo_max_angle_deg: 90.0
-    RF_3: {num: 1.0,  center: 300.0,range: 400.0,direction:  1.0, center_angle_deg: 105.0}
-    RF_2: {num: 2.0,  center: 300.0,range: 400.0,direction:  1.0, center_angle_deg: -55.0}
-    RF_1: {num: 3.0,  center: 300.0,range: 400.0,direction: -1.0, center_angle_deg:  0.0}
-    RB_3: {num: 4.0,  center: 300.0,range: 400.0,direction:  1.0, center_angle_deg: 105.0}
+    RF_3: {num: 1.0,  center: 300.0,range: 400.0,direction:  1.0, center_angle_deg: 100.0}
+    RF_2: {num: 2.0,  center: 300.0,range: 400.0,direction:  1.0, center_angle_deg: -50.0}
+    RF_1: {num: 3.0,  center: 300.0,range: 400.0,direction: -1.0, center_angle_deg: 0.0}
+    RB_3: {num: 4.0,  center: 300.0,range: 400.0,direction:  1.0, center_angle_deg: 100.0}
     RB_2: {num: 5.0,  center: 300.0,range: 400.0,direction:  1.0, center_angle_deg: -55.0}
-    RB_1: {num: 6.0,  center: 300.0,range: 400.0,direction:  1.0, center_angle_deg:  0.0}
+    RB_1: {num: 6.0,  center: 300.0,range: 400.0,direction:  1.0, center_angle_deg: 0.0}
     LB_3: {num: 7.0,  center: 300.0,range: 400.0,direction:  1.0, center_angle_deg: -90.0}
-    LB_2: {num: 8.0,  center: 300.0,range: 400.0,direction:  1.0, center_angle_deg:  55.0}
-    LB_1: {num: 9.0,  center: 300.0,range: 400.0,direction: -1.0, center_angle_deg:  0.0}
+    LB_2: {num: 8.0,  center: 300.0,range: 400.0,direction:  1.0, center_angle_deg: 58.0}
+    LB_1: {num: 9.0,  center: 300.0,range: 400.0,direction: -1.0, center_angle_deg: 0.0}
     LF_3: {num: 10.0, center: 300.0,range: 400.0,direction:  1.0, center_angle_deg: -90.0}
-    LF_2: {num: 11.0, center: 300.0,range: 400.0,direction:  1.0, center_angle_deg:  55.0}
-    LF_1: {num: 12.0, center: 300.0,range: 400.0,direction:  1.0, center_angle_deg:  0.0}
+    LF_2: {num: 11.0, center: 300.0,range: 400.0,direction:  1.0, center_angle_deg: 50.0}
+    LF_1: {num: 12.0, center: 300.0,range: 400.0,direction:  1.0, center_angle_deg: 0.0}
 
     # Control Parameters
     transit_tau: 0.3 # Time constant in seconds for first order filters during transition state
