@@ -1,0 +1,478 @@
+<?xml version="1.0"?>
+<robot name="sparke" xmlns:xacro="http://ros.org/wiki/xacro">
+	<!-- Constants -->
+  <xacro:property name="base_length" value="0.254"/>
+	<xacro:property name="base_width" value="0.11"/>
+  <xacro:property name="base_height" value="0.065"/>
+
+  <xacro:property name="shoulder_length" value="0.034"/>
+	<xacro:property name="shoulder_width" value="0.0635"/>
+  <xacro:property name="shoulder_height" value="0.013"/>
+
+  <xacro:property name="leg_length" value="0.125"/>
+	<xacro:property name="leg_width" value="0.040"/>
+  <xacro:property name="leg_height" value="0.027"/>
+  
+  <xacro:property name="ankle_radius" value="0.0135"/>
+	<xacro:property name="ankle_width" value="0.040"/>
+
+  <xacro:property name="wrist_length" value="0.135"/>
+	<xacro:property name="wrist_width" value="0.0325"/>
+  <xacro:property name="wrist_height" value="0.015"/>
+
+  <xacro:property name="foot_radius" value="0.015"/>
+	<xacro:property name="foot_width" value="0.0325"/>
+
+  <!-- Define intertial property macros  -->
+  <xacro:macro name="box_inertia" params="m w h d">
+    <inertial>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 ${pi/2}"/>
+      <mass value="${m}"/>
+      <inertia ixx="${(m/12) * (h*h + d*d)}" ixy="0.0" ixz="0.0" iyy="${(m/12) * (w*w + d*d)}" iyz="0.0" izz="${(m/12) * (w*w + h*h)}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="cylinder_inertia" params="m r h">
+    <inertial>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+      <mass value="${m}"/>
+      <inertia ixx="${(m/12) * (3*r*r + h*h)}" ixy = "0" ixz = "0" iyy="${(m/12) * (3*r*r + h*h)}" iyz = "0" izz="${(m/2) * (r*r)}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="sphere_inertia" params="m r">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${(2/5) * m * (r*r)}" ixy="0.0" ixz="0.0" iyy="${(2/5) * m * (r*r)}" iyz="0.0" izz="${(2/5) * m * (r*r)}"/>
+    </inertial>
+  </xacro:macro>
+
+
+	<!-- Robot Base -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}"/>
+      </geometry>
+      <material name="Body">
+        <color rgba="0 0.5 0.5 1"/>
+      </material>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0"/>
+      <mass value="2.0"/>
+      <inertia ixx="0.016833333333333332" ixy="0.0" ixz="0.0" iyy="0.04448333333333333" iyz="0.0" izz="0.055683333333333335"/>
+    </inertial>
+  </link>
+
+	<!-- Robot Footprint -->
+  <link name="base_footprint"/>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Shoulders -->
+  <xacro:macro name="shoulder" params="prefix x_reflect y_reflect x_pos y_pos z_pos">
+    <link name="${prefix}_hip_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${shoulder_length/2} ${(shoulder_width-leg_width)/2} 0.01"/>
+        </geometry> 
+        <material name="hip">
+          <color rgba="0 0.6 0.6 1.0"/>
+        </material>
+      </visual>
+
+      <collision>
+        <geometry>
+          <box size="${shoulder_length/2} ${(shoulder_width-leg_width)/2} 0.01"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <mass value="0.25"/>
+        <inertia ixx="0.00048541666666666666" ixy="0.0" ixz="0.0" iyy="0.0006134166666666667" iyz="0.0" izz="0.0003946666666666667"/>
+      </inertial>
+
+    </link>
+
+    <joint name="${prefix}_hip_joint" type="revolute">
+      <parent link="base_link"/>
+      <child link="${prefix}_hip_link"/>
+      <origin xyz="${(x_pos) * x_reflect} ${(y_pos) * y_reflect} ${z_pos-0.005}" rpy="0 0 0"/>
+      <axis xyz="1 0 0"/>
+      <limit effort="1000000" lower="-3.141592653589793" upper="3.141592653589793" velocity="1.5"/>
+      
+    </joint>
+    <!-- <transmission name="${prefix}_hip_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${prefix}_hip_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${prefix}_hip_actuator">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission> -->
+
+    <link name="${prefix}_shoulder_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+            <box size="${shoulder_length} ${shoulder_width} ${shoulder_height}"/>
+        </geometry>
+        <material name="Shoulder">
+          <color rgba="0 0.6 0.6 0.0"/>
+        </material>
+      </visual>
+
+      <collision>
+        <geometry>
+          <box size="${shoulder_length} ${shoulder_width} ${shoulder_height}"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <mass value="0.1"/>
+        <inertia ixx="0.00048541666666666666" ixy="0.0" ixz="0.0" iyy="0.0006134166666666667" iyz="0.0" izz="0.0003946666666666667"/>
+      </inertial>
+
+    </link>
+
+    <joint name="${prefix}_shoulder_joint" type="revolute">
+      <parent link="${prefix}_hip_link"/>
+      <child link="${prefix}_shoulder_link"/>
+      <origin xyz="0 ${(shoulder_width/2) * y_reflect} 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="1000000" lower="-3.141592653589793" upper="3.141592653589793" velocity="1.5"/>
+      
+    </joint>
+
+    <!-- <transmission name="${prefix}_shoulder_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${prefix}_shoulder_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${prefix}_shoulder_actuator">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission> -->
+  </xacro:macro>
+
+  <!-- Legs -->
+  <xacro:macro name="leg" params="prefix x_reflect y_reflect x_pos y_pos z_pos">
+    <link name="${prefix}_leg_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+            <box size="${leg_length} ${leg_width} ${leg_height}"/>
+        </geometry>
+        <material name="Body">
+          <color rgba="0.5 0.5 0.5 1.0"/>
+        </material>
+      </visual>
+
+      <collision>
+        <geometry>
+          <box size="${leg_length} ${leg_width} ${leg_height}"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 -0.0705"/>
+        <mass value="0.125"/>
+        <inertia ixx="0.0003873984375" ixy="0.0" ixz="0.0" iyy="0.0004040651041666667" iyz="0.0" izz="3.541666666666667e-05"/>
+      </inertial>
+      
+    </link>
+
+    <joint name="${prefix}_leg_joint" type="fixed">
+      <parent link="${prefix}_shoulder_link"/>
+      <child link="${prefix}_leg_link"/>
+      <origin xyz="${(x_pos - (leg_length/25)) * x_reflect} ${(y_pos + (leg_width/2)) * y_reflect} ${z_pos - (leg_height/2)}" rpy="0 ${-pi/4} 0"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+
+    <link name="${prefix}_ankle_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
+        <geometry>
+            <cylinder radius="${ankle_radius}" length="${ankle_width}"/>
+        </geometry>
+        <material name="Body">
+          <color rgba="0.5 0.5 0.5 1.0"/>
+        </material>
+      </visual>
+
+      <collision>
+        <geometry>
+          <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
+          <cylinder radius="${ankle_radius}" length="${ankle_width}"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 -0.06299999999999999"/>
+        <mass value="0.125"/>
+        <inertia ixx="0.00025854166666666663" ixy="0.0" ixz="0.0" iyy="0.00026934375" iyz="0.0" izz="2.0885416666666665e-05"/>
+      </inertial>
+
+    </link>
+
+    <joint name="${prefix}_ankle_joint" type="revolute">
+      <parent link="${prefix}_leg_link"/>
+      <child link="${prefix}_ankle_link"/>
+      <origin xyz="${-leg_length/2} 0 0" rpy="0 0 ${pi/2}"/>
+      <axis xyz="1 0 0"/>
+      <limit effort="1000000" lower="-3.141592653589793" upper="3.141592653589793" velocity="1.5"/>
+      
+    </joint>
+
+    <!-- <transmission name="${prefix}_ankle_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${prefix}_ankle_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${prefix}_ankle_actuator">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission> -->
+  </xacro:macro>
+
+  <!-- Wrists -->
+  <xacro:macro name="wrist" params="prefix x_reflect y_reflect x_pos y_pos z_pos">
+    <link name="${prefix}_wrist_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+            <box size="${wrist_length} ${wrist_width} ${wrist_height}"/>
+        </geometry>
+        <material name="Gray">
+          <color rgba="0.5 0.5 0.5 1.0"/>
+        </material>
+      </visual>
+
+      <collision>
+        <geometry>
+          <box size="${wrist_length} ${wrist_width} ${wrist_height}"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <mass value="0.1"/>
+        <inertia ixx="0.00048541666666666666" ixy="0.0" ixz="0.0" iyy="0.0006134166666666667" iyz="0.0" izz="0.0003946666666666667"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_wrist_joint" type="fixed">
+      <parent link="${prefix}_ankle_link"/>
+      <child link="${prefix}_wrist_link"/>
+      <origin xyz="0 0 ${-wrist_length/2}" rpy="0 ${pi/2} ${pi/2}"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+
+    <link name="${prefix}_foot_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+            <cylinder radius="${foot_radius}" length="${foot_width+0.001}"/>
+        </geometry>
+        <material name="black">
+          <color rgba="0.1 0.1 0.1 1"/>
+        </material>
+      </visual>
+
+      <collision>
+        <geometry>
+          <cylinder radius="${foot_radius}" length="${foot_width}"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <mass value="0.1"/>
+        <inertia ixx="0.00048541666666666666" ixy="0.0" ixz="0.0" iyy="0.0006134166666666667" iyz="0.0" izz="0.0003946666666666667"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_foot_joint" type="fixed">
+      <parent link="${prefix}_wrist_link"/>
+      <child link="${prefix}_foot_link"/>
+      <origin xyz="${wrist_length/2} 0 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <axis xyz="0 1 0"/>
+    </joint>    
+
+    <gazebo reference="${prefix}_foot_link">
+      <kp>10000000000.0</kp>
+      <kd>100.0</kd>
+      <mu1>0.8</mu1>
+      <mu2>0.8</mu2>
+      <minDepth>0.05</minDepth>
+      <material>Gazebo/FlatBlack</material>
+    </gazebo>
+
+    <!-- <gazebo reference="${prefix}_foot_joint">
+      <mu>50</mu>
+      <mu2>100</mu2>
+    </gazebo> -->
+
+  </xacro:macro>
+
+  <xacro:shoulder prefix="fl" x_reflect="1" y_reflect="1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/>
+  <xacro:shoulder prefix="fr" x_reflect="1" y_reflect="-1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/>
+  <xacro:shoulder prefix="br" x_reflect="-1" y_reflect="-1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/>
+  <xacro:shoulder prefix="bl" x_reflect="-1" y_reflect="1" x_pos="0.101" y_pos="${base_width/2}" z_pos="${base_height/2}"/>
+
+  <xacro:leg prefix="fl" x_reflect="1" y_reflect="1" x_pos="${-(leg_length/2)+(shoulder_length*0.9)}" y_pos="${-leg_width/2}" z_pos="${-(leg_length/4)-(shoulder_height/4)}"/>
+  <xacro:leg prefix="fr" x_reflect="1" y_reflect="1" x_pos="${-(leg_length/2)+(shoulder_length*0.9)}" y_pos="${-leg_width/2}" z_pos="${-(leg_length/4)-(shoulder_height/4)}"/>
+  <xacro:leg prefix="br" x_reflect="1" y_reflect="1" x_pos="${-(leg_length/2)+(shoulder_length*0.9)}" y_pos="${-leg_width/2}" z_pos="${-(leg_length/4)-(shoulder_height/4)}"/>
+  <xacro:leg prefix="bl" x_reflect="1" y_reflect="1" x_pos="${-(leg_length/2)+(shoulder_length*0.9)}" y_pos="${-leg_width/2}" z_pos="${-(leg_length/4)-(shoulder_height/4)}"/>
+
+  <xacro:wrist prefix="fl" x_reflect="1" y_reflect="1" x_pos="0" y_pos="0" z_pos="0"/>
+  <xacro:wrist prefix="fr" x_reflect="1" y_reflect="1" x_pos="0" y_pos="0" z_pos="0"/>
+  <xacro:wrist prefix="br" x_reflect="1" y_reflect="1" x_pos="0" y_pos="0" z_pos="0"/>
+  <xacro:wrist prefix="bl" x_reflect="1" y_reflect="1" x_pos="0" y_pos="0" z_pos="0"/>
+
+  <gazebo>
+      <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+         <!-- <robot_sim_type>gazebo_ros2_control/GazeboSystem</robot_sim_type> -->
+         <parameters>$(find sparke_description)/params/simple_controller_effort_test.yaml</parameters>
+      </plugin>
+   </gazebo>
+
+  <ros2_control name="fl_ankle_joint" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="fl_ankle_joint">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+  <ros2_control name="fr_ankle_joint" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="fr_ankle_joint">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+  <ros2_control name="bl_ankle_joint" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="bl_ankle_joint">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+  <ros2_control name="br_ankle_joint" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="br_ankle_joint">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <ros2_control name="fl_shoulder_joint" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="fl_shoulder_joint">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+  <ros2_control name="fr_shoulder_joint" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="fr_shoulder_joint">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+  <ros2_control name="bl_shoulder_joint" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="bl_shoulder_joint">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+  <ros2_control name="br_shoulder_joint" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="br_shoulder_joint">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <ros2_control name="fl_hip_joint" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="fl_hip_joint">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+  <ros2_control name="fr_hip_joint" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="fr_hip_joint">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+  <ros2_control name="bl_hip_joint" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="bl_hip_joint">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+  <ros2_control name="br_hip_joint" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="br_hip_joint">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+</robot>

@@ -1,0 +1,49 @@
+controller_manager:
+  ros__parameters:
+    use_sim_time: True
+    update_rate: 250  # Hz
+    joint_states_controller:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    joint_group_effort_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+joint_group_effort_controller:
+  ros__parameters:
+    use_sim_time: True
+    type: joint_trajectory_controller/JointTrajectoryController
+    joints:
+      - fr_ankle_joint
+      - fr_shoulder_joint
+      - fr_hip_joint
+      - br_ankle_joint
+      - br_shoulder_joint
+      - br_hip_joint
+      - bl_ankle_joint
+      - bl_shoulder_joint
+      - bl_hip_joint
+      - fl_ankle_joint
+      - fl_shoulder_joint
+      - fl_hip_joint
+    command_interfaces:
+      - effort
+    # https://github.com/rohitmenon86/ros2_controllers on galactic possible only with that fork
+    # https://github.com/ros-controls/ros2_controllers/pull/225
+    state_interfaces:
+      - position
+      - velocity
+
+    gains:
+      fr_ankle_joint      : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      fr_shoulder_joint   : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      fr_hip_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      br_ankle_joint      : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      br_shoulder_joint   : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      br_hip_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      fl_ankle_joint      : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      fl_shoulder_joint   : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      fl_hip_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      bl_ankle_joint      : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      bl_shoulder_joint   : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      bl_hip_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+
+

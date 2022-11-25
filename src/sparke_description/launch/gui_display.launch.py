@@ -9,8 +9,7 @@ def generate_launch_description():
         package="sparke_description"
     ).find("sparke_description")
     default_model_path = os.path.join(pkg_share, "src/sparke.urdf.xacro")
-    default_rviz_config_path = os.path.join(pkg_share, "rviz/nav2_rviz_config.rviz")
-    default_world_path = os.path.join(pkg_share, "src/sparke-test-world.world")
+    default_rviz_config_path = os.path.join(pkg_share, "rviz/urdf_config.rviz")
 
     robot_state_publisher_node = launch_ros.actions.Node(
         package="robot_state_publisher",
@@ -23,6 +22,13 @@ def generate_launch_description():
         package="joint_state_publisher",
         executable="joint_state_publisher",
         name="joint_state_publisher",
+        condition=launch.conditions.UnlessCondition(LaunchConfiguration("gui")),
+    )
+    joint_state_publisher_gui_node = launch_ros.actions.Node(
+        package="joint_state_publisher_gui",
+        executable="joint_state_publisher_gui",
+        name="joint_state_publisher_gui",
+        condition=launch.conditions.IfCondition(LaunchConfiguration("gui")),
     )
     rviz_node = launch_ros.actions.Node(
         package="rviz2",
@@ -31,15 +37,14 @@ def generate_launch_description():
         output="screen",
         arguments=["-d", LaunchConfiguration("rvizconfig")],
     )
-    spawn_entity = launch_ros.actions.Node(
-        package="gazebo_ros",
-        executable="spawn_entity.py",
-        arguments=["-entity", "sparke", "-topic", "robot_description", "-z", "0.179"],
-        output="screen",
-    )
 
     return launch.LaunchDescription(
         [
+            launch.actions.DeclareLaunchArgument(
+                name="gui",
+                default_value="True",
+                description="Flag to enable joint_state_publisher_gui",
+            ),
             launch.actions.DeclareLaunchArgument(
                 name="model",
                 default_value=default_model_path,
@@ -50,26 +55,9 @@ def generate_launch_description():
                 default_value=default_rviz_config_path,
                 description="Absolute path to rviz config file",
             ),
-            launch.actions.ExecuteProcess(
-                cmd=[
-                    "gazebo",
-                    "--verbose",
-                    "-s",
-                    "libgazebo_ros_init.so",
-                    "-s",
-                    "libgazebo_ros_factory.so",
-                    default_world_path,
-                ],
-                output="screen",
-            ),
-            launch.actions.DeclareLaunchArgument(
-                name="world",
-                default_value=default_world_path,
-                description="Full path to the world model file to load",
-            ),
             joint_state_publisher_node,
+            joint_state_publisher_gui_node,
             robot_state_publisher_node,
-            spawn_entity,
             rviz_node,
         ]
     )
