@@ -10,7 +10,7 @@ def generate_launch_description():
     config = os.path.join(
         get_package_share_directory("spot_micro_motion_cmd"),
         "config",
-        "sparke_params.yaml",
+        "sim_sparke_params.yaml",
     )
 
     node = Node(
