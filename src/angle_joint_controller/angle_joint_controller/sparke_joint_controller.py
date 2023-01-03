@@ -1,5 +1,5 @@
 import rclpy
-
+import sys
 from rclpy.node import Node
 from builtin_interfaces.msg import Duration
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
@@ -9,7 +9,7 @@ import time
 
 class TrajectoryPublisher(Node):
     def __init__(self):
-        super().__init__("topic_desired_trajectory_publisher_node")
+        super().__init__("sparke_joint_controller", allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
         timer_period = 0.1
         self.trajectory_publisher = self.create_publisher(
             JointTrajectory, "/joint_group_effort_controller/joint_trajectory", 10
@@ -73,6 +73,7 @@ class TrajectoryPublisher(Node):
         self.point_msg.positions = goal_positions
         self.my_trajectory_msg.points = [self.point_msg]
         self.trajectory_publisher.publish(self.my_trajectory_msg)
+        time.sleep(0.1)
 
     def servos_proportional_callback(self, msg):
         goal_positions = []
@@ -82,6 +83,7 @@ class TrajectoryPublisher(Node):
         self.point_msg.positions = goal_positions
         self.my_trajectory_msg.points = [self.point_msg]
         self.trajectory_publisher.publish(self.my_trajectory_msg)
+        time.sleep(0.1)
 
     def timer_callback(self):
         print("skip")

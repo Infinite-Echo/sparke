@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'angle_joint_controller = angle_joint_controller.angle_joint_controller:main'
+            'sparke_joint_controller = angle_joint_controller.sparke_joint_controller:main'
         ],
     },
 )
