@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'sparke_sim_service_node = sparke_lifecycle_manager.sparke_sim_service_node:main'
+            'sparke_reset_manager = sparke_lifecycle_manager.sparke_reset_manager:main'
         ],
     },
 )
