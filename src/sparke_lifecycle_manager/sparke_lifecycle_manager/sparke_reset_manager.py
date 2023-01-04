@@ -66,9 +66,9 @@ class sparke_manager(Node):
             self.get_logger().info("Future never finished.")
 
     def init_msgs(self):
-        self.stop_controllers_req.stop_controllers = ["joint_states_controller", "joint_group_effort_controller"]
+        self.stop_controllers_req.stop_controllers = ["joint_group_effort_controller"]
         self.stop_controllers_req.strictness = 1
-        self.start_controllers_req.start_controllers = ["joint_states_controller", "joint_group_effort_controller"]
+        self.start_controllers_req.start_controllers = ["joint_group_effort_controller"]
         self.start_controllers_req.strictness = 1
 
 def main(args=None):
