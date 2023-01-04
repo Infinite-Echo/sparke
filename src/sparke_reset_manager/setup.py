@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'sparke_lifecycle_manager'
+package_name = 'sparke_reset_manager'
 
 setup(
     name=package_name,
@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'sparke_reset_manager = sparke_lifecycle_manager.sparke_reset_manager:main'
+            'sparke_reset_manager = sparke_reset_manager.sparke_reset_manager:main'
         ],
     },
 )
