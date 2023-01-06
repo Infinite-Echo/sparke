@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'sparke_reset_manager = sparke_reset_manager.sparke_reset_manager:main'
+            'sparke_reset_manager = sparke_reset_manager.sparke_reset_manager:main',
+            'test = sparke_reset_manager.test:main',
         ],
     },
 )

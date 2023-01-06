@@ -5,6 +5,7 @@ from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallb
 from rclpy.node import Node
 from std_srvs.srv import Empty
 from controller_manager_msgs.srv import SwitchController
+from builtin_interfaces.msg import Duration
 
 class sparke_manager(Node):
     def __init__(self):
@@ -70,6 +71,8 @@ class sparke_manager(Node):
         self.stop_controllers_req.strictness = 1
         self.start_controllers_req.start_controllers = ["joint_group_effort_controller"]
         self.start_controllers_req.strictness = 1
+        # self.start_controllers_req.timeout.nanosec = 0
+        # self.start_controllers_req.start_asap = True
 
 def main(args=None):
     rclpy.init(args=args)

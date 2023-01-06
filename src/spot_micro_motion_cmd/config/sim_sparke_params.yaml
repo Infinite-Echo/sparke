@@ -2,6 +2,7 @@
   ros__parameters:
     # Configuration parameters
     use_simulation: true
+    use_sim_time: true
 
     # Robot wireframe size parameters
     # Lengths representening a wireframe model of the robot. All lengths joint to joint

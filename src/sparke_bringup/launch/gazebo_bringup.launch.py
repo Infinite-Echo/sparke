@@ -44,6 +44,7 @@ def generate_launch_description():
     gz_pkg_share = launch_ros.substitutions.FindPackageShare(
         package="sparke_description"
     ).find("sparke_description")
+    bringup_pkg_share = launch_ros.substitutions.FindPackageShare(package="sparke_bringup").find("sparke_bringup")
 
     declare_robot_name = DeclareLaunchArgument("robot_name", default_value="sparke")
     declare_use_sim_time = DeclareLaunchArgument("use_sim_time", default_value="True")
@@ -52,6 +53,18 @@ def generate_launch_description():
         "ros_control_file",
         default_value=os.path.join(
             gz_pkg_share, "params/simple_controller_effort_test.yaml"
+        ),
+    )
+    declare_gazebo_file = DeclareLaunchArgument(
+        "gazebo_file",
+        default_value=os.path.join(
+            bringup_pkg_share, "params/gazebo_params.yaml"
+        ),
+    )
+    declare_sparke_reset_manager_file = DeclareLaunchArgument(
+        "sparke_reset_manager_file",
+        default_value=os.path.join(
+            bringup_pkg_share, "params/sparke_reset_manager_params.yaml"
         ),
     )
     # declare_gazebo_world = DeclareLaunchArgument(
@@ -64,6 +77,8 @@ def generate_launch_description():
     # paused = LaunchConfiguration("paused")
     # lite = LaunchConfiguration("lite")
     ros_control_file = LaunchConfiguration("ros_control_file")
+    gazebo_file = LaunchConfiguration("gazebo_file")
+    sparke_reset_manager_file = LaunchConfiguration("sparke_reset_manager_file")
 
     urdf_model_path = os.path.join(get_package_share_directory("sparke_description"))
 
@@ -72,13 +87,6 @@ def generate_launch_description():
     pkg_share = launch_ros.substitutions.FindPackageShare(
         package="sparke_description"
     ).find("sparke_description")
-
-    gazebo_config = os.path.join(
-        launch_ros.substitutions.FindPackageShare(package="sparke_description").find(
-            "sparke_description"
-        ),
-        "params/gazebo.yaml",
-    )
 
     launch_dir = os.path.join(pkg_share, "launch")
 
@@ -139,16 +147,26 @@ def generate_launch_description():
         output="screen",
     )
 
+    start_reset_manager_cmd = Node(
+        package="sparke_reset_manager",
+        executable="sparke_reset_manager",
+        output="screen",
+        parameters=[sparke_reset_manager_file],
+    )
+
     return LaunchDescription(
         [
             declare_robot_name,
             declare_use_sim_time,
             declare_headless,
             declare_ros_control_file,
+            declare_gazebo_file,
+            declare_sparke_reset_manager_file,
             start_gazebo_server_cmd,
             start_gazebo_client_cmd,
             start_gazebo_spawner_cmd,
             load_joint_state_controller,
             load_joint_trajectory1_controller,
+            start_reset_manager_cmd,
         ]
     )
