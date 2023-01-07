@@ -27,7 +27,7 @@ class SparkeAINode(Node):
 
         self.timer = self.create_timer(0.2, self.timer_cb, callback_group=timer_cb_group)
         self.create_subscription(Odometry, "/odom", self.odom_cb, callback_group=subscription_cb_group, qos_profile=qos_policy)
-        self.create_subscription(Twist, "/cmd_vel", self.odom_cb, 10, callback_group=subscription_cb_group)
+        self.create_subscription(Twist, "/cmd_vel", self.cmd_vel_cb, 10, callback_group=subscription_cb_group)
 
     def timer_cb(self):
         actor_state = self.get_actor_state()
@@ -52,7 +52,6 @@ class SparkeAINode(Node):
         new_pose.append(msg.twist.twist.angular.x)
         new_pose.append(msg.twist.twist.angular.y)
         new_pose.append(msg.twist.twist.angular.z)
-        self.get_logger().info(new_pose)
         self.current_pose = new_pose
 
     def cmd_vel_cb(self, msg):
@@ -63,7 +62,6 @@ class SparkeAINode(Node):
         velocity.append(msg.angular.x)
         velocity.append(msg.angular.y)
         velocity.append(msg.angular.z)
-        self.get_logger().info(f"velocity: {velocity}")
         self.target_velocity = velocity
 
     def init_msgs(self):
@@ -126,8 +124,8 @@ class SparkeAINode(Node):
         '''
         state = []
         state.append(self.current_pose)
-        for x in range(6):
-            state[x+7] = self.target_velocity[x]
+        # for x in range(6):
+        #     state[x+7] = self.target_velocity[x]
         state.append(self.current_joint_angles)
         return state
 
