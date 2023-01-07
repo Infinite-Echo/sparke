@@ -81,7 +81,7 @@ def generate_launch_description():
         [
             declare_use_simulation,
             robot_state_publisher_node,
-            motion_command_ld,
-            i2cpwm_board_node,
+            # motion_command_ld,
+            # i2cpwm_board_node,
         ]
     )
