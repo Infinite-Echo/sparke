@@ -5,13 +5,13 @@ class SparkeAI:
     def __init__(self, num_joints=12, learning_rate=0.001):
         # Define the policy model
         self.policy_model = tf.keras.Sequential()
-        self.policy_model.add(tf.keras.layers.Dense(64, input_shape=(num_joints + 6,), activation='relu'))
+        self.policy_model.add(tf.keras.layers.Dense(64, input_shape=(25,), activation='relu'))
         self.policy_model.add(tf.keras.layers.Dense(64, activation='relu'))
         self.policy_model.add(tf.keras.layers.Dense(num_joints))
         
         # Define the critic model
         self.critic_model = tf.keras.Sequential()
-        self.critic_model.add(tf.keras.layers.Dense(64, input_shape=(num_joints + 6,), activation='relu'))
+        self.critic_model.add(tf.keras.layers.Dense(64, input_shape=(25,), activation='relu'))
         self.critic_model.add(tf.keras.layers.Dense(64, activation='relu'))
         self.critic_model.add(tf.keras.layers.Dense(1))
         

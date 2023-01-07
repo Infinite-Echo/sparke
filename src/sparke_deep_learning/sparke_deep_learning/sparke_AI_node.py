@@ -31,11 +31,11 @@ class SparkeAINode(Node):
 
     def timer_cb(self):
         actor_state = self.get_actor_state()
-        predicted_joint_angles = SparkeAI.predict_policy(actor_state)
+        predicted_joint_angles = self.ai.predict_policy(actor_state)
         self.update_trajectory(predicted_joint_angles)
         self.publish_trajectory()
         critic_state = self.get_critic_state()
-        predicted_value = SparkeAI.predict_value(critic_state)
+        predicted_value = self.ai.predict_value(critic_state)
 
     def odom_cb(self, msg):
         new_pose = []
