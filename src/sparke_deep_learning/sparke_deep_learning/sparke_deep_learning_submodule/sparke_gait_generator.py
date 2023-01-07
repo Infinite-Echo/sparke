@@ -71,22 +71,22 @@ class SparkeAI:
         # Return the total loss
         return total_loss
 
-def main():
-    # Create an instance of the QuadrupedRobot class
-    robot = SparkeAI()
+# def main():
+#     # Create an instance of the QuadrupedRobot class
+#     robot = SparkeAI()
 
-    # Generate a batch of input states
-    input_states = np.random.rand(1, 18)
+#     # Generate a batch of input states
+#     input_states = np.random.rand(1, 18)
 
-    # Get the predicted joint angles
-    predicted_joint_angles = robot.predict_policy(input_states)
+#     # Get the predicted joint angles
+#     predicted_joint_angles = robot.predict_policy(input_states)
 
-    # Get the predicted expected returns
-    predicted_expected_returns = robot.predict_value(input_states)
+#     # Get the predicted expected returns
+#     predicted_expected_returns = robot.predict_value(input_states)
 
-    print(predicted_joint_angles)
-    print(predicted_expected_returns)
+#     print(predicted_joint_angles)
+#     print(predicted_expected_returns)
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

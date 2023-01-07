@@ -3,27 +3,31 @@ from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 from nav_msgs.msg import Odometry
-from sparke_gait_generator import SparkeAI
+from .sparke_deep_learning_submodule.sparke_gait_generator import SparkeAI
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from geometry_msgs.msg import Twist
 
 class SparkeAINode(Node):
     def __init__(self):
-        super.__init__("sparke_ai_node", allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
+        super().__init__("sparke_ai_node", allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
         self.ai = SparkeAI()
-
-        self.init_msgs()
 
         timer_cb_group = MutuallyExclusiveCallbackGroup()
         publisher_cb_group = ReentrantCallbackGroup()
         subscription_cb_group = ReentrantCallbackGroup()
+        qos_policy = rclpy.qos.QoSProfile(reliability=rclpy.qos.ReliabilityPolicy.BEST_EFFORT,
+                                          history=rclpy.qos.HistoryPolicy.KEEP_LAST,
+                                          depth=1)
 
-        self.timer = self.create_timer(0.2, self.timer_cb, callback_group=timer_cb_group)
-        self.create_subscription(Odometry, "/odom", self.odom_cb, callback_group=subscription_cb_group)
-        self.create_subscription(Twist, "/cmd_vel", self.odom_cb, callback_group=subscription_cb_group)
         self.trajectory_publisher = self.create_publisher(
             JointTrajectory, "/joint_group_effort_controller/joint_trajectory", 10, callback_group=publisher_cb_group
         )
+
+        self.init_msgs()
+
+        self.timer = self.create_timer(0.2, self.timer_cb, callback_group=timer_cb_group)
+        self.create_subscription(Odometry, "/odom", self.odom_cb, callback_group=subscription_cb_group, qos_profile=qos_policy)
+        self.create_subscription(Twist, "/cmd_vel", self.odom_cb, 10, callback_group=subscription_cb_group)
 
     def timer_cb(self):
         actor_state = self.get_actor_state()
@@ -48,6 +52,7 @@ class SparkeAINode(Node):
         new_pose.append(msg.twist.twist.angular.x)
         new_pose.append(msg.twist.twist.angular.y)
         new_pose.append(msg.twist.twist.angular.z)
+        self.get_logger().info(new_pose)
         self.current_pose = new_pose
 
     def cmd_vel_cb(self, msg):
@@ -58,6 +63,7 @@ class SparkeAINode(Node):
         velocity.append(msg.angular.x)
         velocity.append(msg.angular.y)
         velocity.append(msg.angular.z)
+        self.get_logger().info(f"velocity: {velocity}")
         self.target_velocity = velocity
 
     def init_msgs(self):
@@ -65,6 +71,9 @@ class SparkeAINode(Node):
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
         ]
         self.update_trajectory(initial_joint_angles)
+        self.target_velocity = [
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        ]
 
         joints = [
             "fr_ankle_joint",
@@ -95,10 +104,7 @@ class SparkeAINode(Node):
         self.trajectory_publisher.publish(self.trajectory_msg)
 
     def update_trajectory(self, joint_angles):
-        new_joint_angles = []
-        for x in range(12):
-            new_joint_angles.append(joint_angles[x].value)
-        self.current_joint_angles = new_joint_angles
+        self.current_joint_angles = joint_angles
 
     def get_actor_state(self):
         ''' 
@@ -147,3 +153,20 @@ class SparkeAINode(Node):
         state.append(self.current_pose)
         state.append(self.current_joint_angles)
         return state
+
+def main(args=None):
+    rclpy.init(args=args)
+
+    ai_node = SparkeAINode()
+
+    executor = MultiThreadedExecutor()
+    executor.add_node(ai_node)
+
+    while rclpy.ok():
+        executor.spin()
+
+    executor.shutdown()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()

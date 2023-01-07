@@ -5,7 +5,7 @@ package_name = 'sparke_deep_learning'
 setup(
     name=package_name,
     version='0.0.0',
-    packages=[package_name],
+    packages=[package_name, 'sparke_deep_learning/sparke_deep_learning_submodule'],
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'sparke_gait_generator = sparke_deep_learning.sparke_gait_generator:main'
+            'sparke_AI_node = sparke_deep_learning.sparke_AI_node:main'
         ],
     },
 )
