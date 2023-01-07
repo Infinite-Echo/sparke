@@ -76,13 +76,19 @@ class SparkeAI:
 #     robot = SparkeAI()
 
 #     # Generate a batch of input states
-#     input_states = np.random.rand(1, 18)
+#     input_states = np.random.rand(1, 25)
 
 #     # Get the predicted joint angles
 #     predicted_joint_angles = robot.predict_policy(input_states)
 
 #     # Get the predicted expected returns
 #     predicted_expected_returns = robot.predict_value(input_states)
+
+#     # joint_angles_arr = predicted_joint_angles.numpy()
+#     # joint_angles_list = []
+#     # for x in range(12):
+#     #     joint_angles_list.append(joint_angles_arr[0][x])
+#     # print(f'joint angles: {joint_angles_list}')
 
 #     print(predicted_joint_angles)
 #     print(predicted_expected_returns)
