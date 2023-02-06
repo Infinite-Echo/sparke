@@ -1,0 +1,3 @@
+[submodule "src/sparke_motion/libs/sparkeKinematics"]
+	path = src/sparke_motion/libs/sparkeKinematics
+	url = https://github.com/Infinite-Echo/sparkeKinematics.git
