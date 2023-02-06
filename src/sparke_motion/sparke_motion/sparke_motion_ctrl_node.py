@@ -1,6 +1,8 @@
 from rclpy.node import Node
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, Pose
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+from libs.sparkeKinematics.kinematics_np.base_transformations import create_base_transformation
+import numpy as np
 
 class sparke_motion_ctrl_node(Node):
     def __init__(self):
@@ -21,6 +23,7 @@ class sparke_motion_ctrl_node(Node):
 
     def init_subscribers(self):
         self.cmd_vel_sub = self.create_subscription(Twist, 'cmd_vel', self.cmd_vel_cb, 10)
+        self.base_pose = self.create_subscription(Pose, 'base_pose', self.update_base_transform, 10)
 
     def init_msgs(self):
         initial_positions = [
@@ -61,6 +64,10 @@ class sparke_motion_ctrl_node(Node):
 
     def cmd_vel_cb(self, cmd_vel):
         self.target_vel_msg = cmd_vel
+
+    def update_base_transform(self, pose):
+        #ignoring angles for now because of quaternions
+        self.Tm = create_base_transformation(pose.position.x, pose.position.y, pose.position.z, 0, 0, 0)
         
     def publish_trajectory(self):
         self.trajectory_publisher.publish(self.traj_msg)
