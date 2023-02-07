@@ -1,74 +1,73 @@
+import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist, Pose
-from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
-from libs.sparkeKinematics.kinematics_np.base_transformations import create_base_transformation
+from trajectory_msgs.msg import JointTrajectory
 import numpy as np
+from rclpy.executors import MultiThreadedExecutor
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
+from sparke_gait_controller import SparkeGaitController
 
-class sparke_motion_ctrl_node(Node):
+class SparkeMotionCtrlNode(Node):
     def __init__(self):
         super().__init__("sparke_motion_ctrl_node", allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
+        self.gait_controller = SparkeGaitController()
         self.init_params()
         self.init_publishers()
         self.init_subscribers()
         self.init_msgs()
-        self.timer = self.create_timer(self.publish_rate, self.publish_trajectory)
+        self.init_timers()
 
     def init_params(self):
         self.publish_rate = self.get_parameter('publish_rate')
 
     def init_publishers(self):
+        publish_cb_group = MutuallyExclusiveCallbackGroup()
         self.trajectory_publisher = self.create_publisher(
-            JointTrajectory, "/joint_group_effort_controller/joint_trajectory", 10
+            JointTrajectory, "/joint_group_effort_controller/joint_trajectory", 10, callback_group=publish_cb_group
         )
 
     def init_subscribers(self):
-        self.cmd_vel_sub = self.create_subscription(Twist, 'cmd_vel', self.cmd_vel_cb, 10)
-        self.base_pose = self.create_subscription(Pose, 'base_pose', self.update_base_transform, 10)
+        subscriber_cb_group = MutuallyExclusiveCallbackGroup()
+        self.cmd_vel_sub = self.create_subscription(Twist, 'cmd_vel', self.cmd_vel_cb, 10, callback_group=subscriber_cb_group)
+        self.base_pose = self.create_subscription(Pose, 'base_pose', self.base_pose_cb, 10, callback_group=subscriber_cb_group)
 
     def init_msgs(self):
-        initial_positions = [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-        ]
-        joints = [
-            "fr_ankle_joint",
-            "fr_shoulder_joint",
-            "fr_hip_joint",
-            "br_ankle_joint",
-            "br_shoulder_joint",
-            "br_hip_joint",
-            "bl_ankle_joint",
-            "bl_shoulder_joint",
-            "bl_hip_joint",
-            "fl_ankle_joint",
-            "fl_shoulder_joint",
-            "fl_hip_joint",
-        ]
-
-        self.point_msg = JointTrajectoryPoint()
-        self.point_msg.positions = initial_positions
         self.traj_msg = JointTrajectory()
-        self.traj_msg.joint_names = joints
-        self.traj_msg.points = [self.point_msg]
-        self.target_vel_msg = Twist()
+        self.current_vel_msg = Twist()
+
+    def init_timers(self):
+        publish_timer_cb_group = MutuallyExclusiveCallbackGroup()
+        gait_timer_cb_group = MutuallyExclusiveCallbackGroup()
+        self.publish_timer = self.create_timer(self.publish_rate, self.publish_trajectory, callback_group=publish_timer_cb_group)
+        self.gait_timer = self.create_timer(self.publish_rate, self.get_traj_point, callback_group=gait_timer_cb_group)
 
     def cmd_vel_cb(self, cmd_vel):
-        self.target_vel_msg = cmd_vel
+        if self.current_vel_msg != cmd_vel:
+            self.current_vel_msg = cmd_vel
+            self.gait_controller.update_gait(self.current_vel_msg)
 
-    def update_base_transform(self, pose):
-        #ignoring angles for now because of quaternions
-        self.Tm = create_base_transformation(pose.position.x, pose.position.y, pose.position.z, 0, 0, 0)
+    def base_pose_cb(self, pose):
+        self.gait_controller.update_body_pose(pose)
         
     def publish_trajectory(self):
         self.trajectory_publisher.publish(self.traj_msg)
 
+    def get_traj_point(self):
+        self.traj_msg = self.gait_controller.get_next_point()
+
+def main(args=None):
+    rclpy.init(args=args)
+
+    motion_ctrl_node = SparkeMotionCtrlNode()
+
+    executor = MultiThreadedExecutor()
+    executor.add_node(motion_ctrl_node)
+
+    while rclpy.ok():
+        executor.spin()
+
+    executor.shutdown()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
