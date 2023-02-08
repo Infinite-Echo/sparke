@@ -1,9 +1,9 @@
 import numpy as np
-from libs.sparkeKinematics.kinematics_np.sparke_leg_IK import SparkeLeg
+from .libs.sparkeKinematics.kinematics_np.sparke_leg_IK import SparkeLeg
 from geometry_msgs.msg import Twist, Pose
-from libs.sparkeKinematics.kinematics_np.base_transformations import create_base_transformation
+from .libs.sparkeKinematics.kinematics_np.base_transformations import create_base_transformation
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
-from libs.sparkeKinematics.kinematics_np.sparke_base_IK import SparkeBase
+from .libs.sparkeKinematics.kinematics_np.sparke_base_IK import SparkeBase
 
 class SparkeGaitController():
     def __init__(self):

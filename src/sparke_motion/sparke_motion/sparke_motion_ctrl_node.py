@@ -5,7 +5,8 @@ from trajectory_msgs.msg import JointTrajectory
 import numpy as np
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
-from sparke_gait_controller import SparkeGaitController
+# from sparke_gait_controller import SparkeGaitController
+from .sparke_gait_controller import SparkeGaitController
 
 class SparkeMotionCtrlNode(Node):
     def __init__(self):

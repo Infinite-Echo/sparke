@@ -50,20 +50,20 @@ def generate_launch_description():
         executable="ros_i2cpwm_board",
     )
 
-    spot_micro_motion_cmd_node = Node(
-        package="spot_micro_motion_cmd",
-        executable="spot_micro_motion_cmd_node",
-    )
+    # spot_micro_motion_cmd_node = Node(
+    #     package="spot_micro_motion_cmd",
+    #     executable="spot_micro_motion_cmd_node",
+    # )
 
-    motion_command_ld = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                get_package_share_directory("spot_micro_motion_cmd"),
-                "launch",
-                "motion_cmd.launch.py",
-            )
-        ),
-    )
+    # motion_command_ld = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(
+    #             get_package_share_directory("spot_micro_motion_cmd"),
+    #             "launch",
+    #             "motion_cmd.launch.py",
+    #         )
+    #     ),
+    # )
 
     robot_state_publisher_node = Node(
         package="robot_state_publisher",

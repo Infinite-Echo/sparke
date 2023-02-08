@@ -5,7 +5,7 @@ package_name = 'sparke_motion'
 setup(
     name=package_name,
     version='0.0.0',
-    packages=[package_name],
+    packages=[package_name, (package_name + '/libs/sparkeKinematics/kinematics_np')],
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'sparke_motion_controller = sparke_motion.sparke_motion_controller:main'
+            'sparke_motion_ctrl_node = sparke_motion.sparke_motion_ctrl_node:main'
         ],
     },
 )
