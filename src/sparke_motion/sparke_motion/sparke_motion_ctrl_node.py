@@ -19,7 +19,7 @@ class SparkeMotionCtrlNode(Node):
         self.init_timers()
 
     def init_params(self):
-        self.publish_rate = self.get_parameter('publish_rate')
+        self.publish_rate = 0.5
 
     def init_publishers(self):
         publish_cb_group = MutuallyExclusiveCallbackGroup()

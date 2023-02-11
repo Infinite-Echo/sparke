@@ -7,6 +7,7 @@ from .libs.sparkeKinematics.kinematics_np.sparke_base_IK import SparkeBase
 
 class SparkeGaitController():
     def __init__(self):
+        self.init_vars()
         self.sparkeBase = SparkeBase()
         pass
 
