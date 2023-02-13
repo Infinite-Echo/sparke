@@ -69,10 +69,13 @@ class SparkeGaitController():
         goal_positions = self.sparkeBase.get_angles_from_trajectory(self.Tm, x_ee_array, y_ee_array, z_ee_array)
         self.point_msg.positions = goal_positions
         self.traj_msg.points = [self.point_msg]
+        self.prev_x_ee_array = np.copy(x_ee_array)
+        self.prev_y_ee_array = np.copy(y_ee_array)
+        self.prev_z_ee_array = np.copy(z_ee_array)
 
     def get_leg_end_points(self):
-        x_ee_array = np.empty(4)
-        y_ee_array = np.empty(4)
-        z_ee_array = np.empty(4)
+        x_ee_array = np.zeros(4)
+        y_ee_array = np.zeros(4)
+        z_ee_array = np.zeros(4)
         #use current gait phase to get each legs end points
         return x_ee_array, y_ee_array, z_ee_array        
