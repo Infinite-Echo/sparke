@@ -11,7 +11,7 @@ At the moment, this project is a work in progress. As a full time college underg
 I've set up a Gazebo simulation environment to mimic the physical behavior of the mini Spot robot. The simulation is based on simulated kinematics, achieved either through ROS2 control or custom Gazebo plugins.
 
 ### Custom Kinematics Solutions
-In addition to using existing ROS2 control mechanisms, I've been developing custom kinematics solutions tailored to the specific dynamics of the mini Spot robot. This involves fine-tuning the motion control and ensuring smooth navigation within the simulation.
+In addition to using existing ROS2 control mechanisms, I've been developing custom kinematics solutions tailored to the specific dynamics of the mini Spot robot. This involves fine-tuning the motion control and ensuring smooth navigation within the simulation. (https://github.com/Infinite-Echo/sparkeKinematics)
 
 ## Planned Features
 Looking ahead, I have exciting plans for expanding the capabilities of the mini Spot robot:
