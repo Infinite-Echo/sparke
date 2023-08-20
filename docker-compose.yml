@@ -1,0 +1,55 @@
+version: "3.8"
+services:
+  # sparke_dev:
+  #   build:
+  #     args:
+  #       UID: ${UID}
+  #       GID: ${GID}
+  #       USER: ${USER}
+  #     context: .
+  #     dockerfile: dockerfiles/Dockerfile.sparke_dev
+  #   command: bash -c "source /opt/ros/galactic/setup.sh && bash"
+  #   image: infiniteecho/sparke_dev:latest
+  #   container_name: sparke-dev
+  #   hostname: sparke-dev
+  #   extra_hosts:
+  #     - sparke-dev:127.0.0.1
+  #   network_mode: host
+  #   environment:
+  #     - DISPLAY=${DISPLAY}
+  #     - QT_X11_NO_MITSHM=1
+  #     - TERM=xterm-256color
+  #     - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
+  #   volumes:
+  #     - /dev:/dev
+  #     - ../:/${HOME}/ws/
+  #     - /tmp/.X11-unix:/tmp/.X11-unix:rw
+  #     - ${HOME}/.Xauthority:/root/.Xauthority:rw
+  #     - ${XDG_RUNTIME_DIR}:${XDG_RUNTIME_DIR}:ro
+  #     - ${HOME}/.ssh:${HOME}/.ssh:ro
+  #     - ${HOME}/.gitconfig:${HOME}/.gitconfig:ro
+  #     - /etc/group:/etc/group:ro
+  #     - /etc/passwd:/etc/passwd:ro
+  #     - /etc/shadow:/etc/shadow:ro
+  #     - gazebo-cache:${HOME}/.gazebo
+  #   pid: host
+  #   privileged: true
+  #   stop_grace_period: 1s
+  sparke:
+    image: infiniteecho/sparke
+    runtime: nvidia
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.sparke
+    volumes:
+      - "//dev://dev"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    network_mode: host
+    pid: host
+    privileged: true
+    stop_grace_period: 1s
+    environment:
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID}
+volumes:
+  gazebo-cache:

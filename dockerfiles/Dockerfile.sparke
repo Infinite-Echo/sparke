@@ -1,0 +1,11 @@
+FROM infiniteecho/sparke_base
+
+WORKDIR /opt/ros/ws
+
+COPY src .
+RUN . /opt/ros/galactic/setup.sh && \
+    colcon build --packages-up-to angle_joint_controller i2c_interfaces ros_i2cpwm_board servo_move_keyboard sparke_bringup sparke_description spot_micro_keyboard_command spot_micro_motion_cmd
+
+COPY startup.sh .
+
+CMD ["./startup.sh"]
