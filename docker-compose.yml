@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  sparke:
+    image: infiniteecho/sparke
+    runtime: nvidia
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.sparke
+    volumes:
+      - "//dev://dev"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    network_mode: host
+    pid: host
+    privileged: true
+    stop_grace_period: 1s
+    environment:
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID}
