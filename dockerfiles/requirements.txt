@@ -1,2 +1,2 @@
 numpy
-setuptools
+setuptools==58.2.0
