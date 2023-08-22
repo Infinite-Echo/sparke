@@ -27,7 +27,7 @@ services:
     container_name: sparke_dev
     runtime: nvidia
     environment:
-      DISPLAY: :1
+      DISPLAY: ${DISPLAY}
       ROS_DOMAIN_ID: ${ROS_DOMAIN_ID}
       UID: ${UID}
       GID: ${GID}
