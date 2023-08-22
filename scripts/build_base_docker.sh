@@ -6,7 +6,9 @@ current_working_dir=$(pwd)
 if [ -z "$folder_path" ]; then
   echo "Folder 'sparke' not found."
 else
-  cd $folder_path/dockerfiles/
+  cd $folder_path
+  cd dockerfiles
+  echo $(pwd)
   docker build -t infiniteecho/sparke_base -f Dockerfile.sparke_base .
 fi
 
