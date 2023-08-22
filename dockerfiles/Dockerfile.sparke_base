@@ -1,5 +1,5 @@
 # Use the NVIDIA CUDA base image
-FROM nvidia/cuda:12.2.0-runtime-ubuntu20.04
+FROM nvidia/cuda:12.2.0-runtime-ubuntu22.04
 
 # Set non-interactive mode for installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -11,16 +11,18 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     gnupg2 \
     libi2c-dev \
+    nano \
     lsb-release
 
-# Setup sources and keys for ROS 2 Galactic
+# Setup sources and keys for ROS 2 humble
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
 RUN sh -c 'echo "deb [arch=$(dpkg --print-architecture)] http://packages.ros.org/ros2/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros2-latest.list'
 
 # Install ROS 2 packages
 RUN apt-get update && apt-get install -y \
-    ros-galactic-ros-base \
-    ros-galactic-xacro \
+    ros-humble-ros-base \
+    ros-humble-xacro \
+    ros-humble-tf2* \
     ros-dev-tools
 
 # Clean up

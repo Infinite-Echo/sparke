@@ -26,7 +26,7 @@ joint_group_effort_controller:
       - fl_hip_joint
     command_interfaces:
       - effort
-    # https://github.com/rohitmenon86/ros2_controllers on galactic possible only with that fork
+    # https://github.com/rohitmenon86/ros2_controllers on humble possible only with that fork
     # https://github.com/ros-controls/ros2_controllers/pull/225
     state_interfaces:
       - position
