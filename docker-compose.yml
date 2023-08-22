@@ -45,7 +45,7 @@ services:
     privileged: true
     network_mode: host
     pid: host
-    command: bash
+    command: ./scripts/setup_dev.sh
     working_dir: /opt/ros/ws
 volumes:
   gazebo-cache:
