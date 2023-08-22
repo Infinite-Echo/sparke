@@ -1,0 +1,26 @@
+# uses nvidia ubuntu 22.04 image and installs necessary dependencies for the repo
+FROM infiniteecho/sparke_base
+
+ARG UID
+ARG GID
+ARG USER
+
+RUN if [ -z "$UID" ]; then echo '\nERROR: Please run export UID.\n'; exit 1; fi
+RUN if [ -z "$GID" ]; then echo '\nERROR: Please run export GID.\n'; exit 1; fi
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    ros-humble-gazebo* \
+    ros-humble-rviz* \
+    x11-apps \
+    x11-xserver-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN groupadd --gid $GID $USER \
+  && useradd --no-log-init --uid $GID --gid $UID -m $USER --groups sudo \
+  && echo $USER ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USER \
+  && chmod 0440 /etc/sudoers.d/$USER \
+  && echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /home/${USER}/.profile \
+  && touch /home/${USER}/.bashrc \
+  && mkdir /home/${USER}/.gazebo \
+  && chown -R ${GID}:${UID} /home/${USER}
