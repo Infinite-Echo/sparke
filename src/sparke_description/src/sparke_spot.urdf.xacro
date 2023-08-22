@@ -217,8 +217,8 @@
       </visual>
 
       <collision>
+        <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
         <geometry>
-          <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
           <cylinder radius="${ankle_radius}" length="${ankle_width}"/>
         </geometry>
       </collision>
