@@ -8,9 +8,7 @@ The goal of this project is to replicate the functionality of the Boston Dynamic
 At the moment, this project is a work in progress. As a full time college undergraduate student, I find it hard to consistenly work on this project. There will often be large gaps of time between updates.
 
 ### Gazebo Simulation
-A gazebo simulation is in development for sparke. The simulation was only functional with the galactic branch of https://github.com/rohitmenon86/ros2_controllers (note: the robot would still struggle to move forwards but motor controls worked). As of August 21 2023, the project has been migrated to humble and simulation will not be functional for the time being.
-
-Fortunately, humble should have the necessary additions to the joint trajectory controller for the simulation to work without the need for external changes. Unfortunately, as a result of humble being native to ubuntu 22.04 and myself being on 20.04, I need to create a development docker so that I can run gazebo on 22.04. I hope to have this done within the next few days. 
+A gazebo simulation is in development for sparke. As of August 22 2023, the simulation is working on humble! Instructions on how to run the simulation can be found in the doc folder. Please keep in mind that the simulation is still very much a WIP. The inertias, PID gains, etc need to be tuned.
 
 ### Custom Kinematics Solutions
 In addition to using existing ROS2 control mechanisms, I've been developing custom kinematics solutions tailored to the specific dynamics of the mini Spot robot. This involves fine-tuning the motion control and ensuring smooth navigation within the simulation. (https://github.com/Infinite-Echo/sparkeKinematics)

@@ -5,29 +5,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# set(ROS2_CONTROL_URL "https://github.com/rohitmenon86/ros2_controllers")
-# set(ROS2_CONTROL_DOWNLOAD_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../..)
-# set(ROS2_CONTROL_DEPENDENCY_PATH ${ROS2_CONTROL_DOWNLOAD_PATH}/ros2_controllers)
-
-# if (NOT EXISTS "${ROS2_CONTROL_DEPENDENCY_PATH}")
-#   message(STATUS "Downloading ros2_controllers")
-#   message(STATUS "${ROS2_CONTROL_DOWNLOAD_PATH}")
-
-#   execute_process(
-#     COMMAND git clone ${ROS2_CONTROL_URL} ${ROS2_CONTROL_DEPENDENCY_PATH} -b $ENV{ROS_DISTRO}
-#   )
-
-#   execute_process(
-#     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../..
-#     COMMAND rosdep install --from-paths src -i -r -y
-#   )
-
-#   execute_process(
-#     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../..
-#     COMMAND colcon build --packages-select joint_trajectory_controller
-#   )
-# endif()
-
 # find dependencies
 find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in

@@ -44,6 +44,10 @@ def generate_launch_description():
     urdf_model_path = os.path.join(get_package_share_directory("sparke_description"))
     xacro_file = os.path.join(urdf_model_path, "src", "sparke_spot.urdf.xacro")
 
+    doc = xacro.parse(open(xacro_file))
+    xacro.process_doc(doc)
+    params = {'robot_description': doc.toxml()}
+
     i2cpwm_board_node = Node(
         condition=IfCondition(PythonExpression([" not ", use_simulation])),
         package="ros_i2cpwm_board",
@@ -65,22 +69,17 @@ def generate_launch_description():
         ),
     )
 
-    robot_state_publisher_node = Node(
-        package="robot_state_publisher",
-        executable="robot_state_publisher",
-        parameters=[
-            {"robot_description": Command(["xacro ", xacro_file])},
-            {"use_tf_static": False},
-            {"publish_frequency": 200.0},
-            {"ignore_timestamp": True},
-            {"use_sim_time": True},
-        ],
+    node_robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[params]
     )
 
     return LaunchDescription(
         [
             declare_use_simulation,
-            robot_state_publisher_node,
+            node_robot_state_publisher,
             motion_command_ld,
             i2cpwm_board_node,
         ]

@@ -2,7 +2,7 @@ controller_manager:
   ros__parameters:
     use_sim_time: True
     update_rate: 250  # Hz
-    joint_states_controller:
+    joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
     joint_group_effort_controller:
       type: joint_trajectory_controller/JointTrajectoryController
@@ -26,12 +26,9 @@ joint_group_effort_controller:
       - fl_hip_joint
     command_interfaces:
       - effort
-    # https://github.com/rohitmenon86/ros2_controllers on galactic possible only with that fork
-    # https://github.com/ros-controls/ros2_controllers/pull/225
     state_interfaces:
       - position
       - velocity
-
     gains:
       fr_ankle_joint      : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5} #these are untuned, they are just placeholders
       fr_shoulder_joint   : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}

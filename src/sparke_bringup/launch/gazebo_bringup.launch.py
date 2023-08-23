@@ -27,7 +27,8 @@ from launch.actions import (
 )
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, LaunchConfiguration, PythonExpression
+from launch.substitutions import Command, LaunchConfiguration, PythonExpression, FindExecutable, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 from launch.actions import (
     DeclareLaunchArgument,
@@ -48,12 +49,6 @@ def generate_launch_description():
     declare_robot_name = DeclareLaunchArgument("robot_name", default_value="sparke")
     declare_use_sim_time = DeclareLaunchArgument("use_sim_time", default_value="True")
     declare_headless = DeclareLaunchArgument("headless", default_value="False")
-    declare_ros_control_file = DeclareLaunchArgument(
-        "ros_control_file",
-        default_value=os.path.join(
-            gz_pkg_share, "params/simple_controller_effort_test.yaml"
-        ),
-    )
     # declare_gazebo_world = DeclareLaunchArgument(
     #     "world", default_value=os.path.join(gz_pkg_share, "worlds/default.world")
     # )
@@ -63,11 +58,28 @@ def generate_launch_description():
     headless = LaunchConfiguration("headless")
     # paused = LaunchConfiguration("paused")
     # lite = LaunchConfiguration("lite")
-    ros_control_file = LaunchConfiguration("ros_control_file")
+    robot_controllers = PathJoinSubstitution(
+        [
+            FindPackageShare("sparke_description"),
+            "params",
+            "simple_controller_effort_test.yaml",
+        ]
+    )
 
-    urdf_model_path = os.path.join(get_package_share_directory("sparke_description"))
-
-    xacro_file = os.path.join(urdf_model_path, "src", "sparke_spot.urdf.xacro")
+    robot_description_content = Command(
+        [
+            PathJoinSubstitution([FindExecutable(name="xacro")]),
+            " ",
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("sparke_description"),
+                    "src",
+                    "sparke_spot.urdf.xacro",
+                ]
+            ),
+        ]
+    )
+    robot_description = {"robot_description": robot_description_content}
 
     pkg_share = launch_ros.substitutions.FindPackageShare(
         package="sparke_description"
@@ -115,28 +127,36 @@ def generate_launch_description():
         ],
     )
 
-    load_joint_state_controller = ExecuteProcess(
-        cmd=[
-            "ros2",
-            "control",
-            "load_controller",
-            "--set-state",
-            "start",
-            "joint_states_controller",
-        ],
-        output="screen",
+    control_node = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[robot_description, robot_controllers],
+        output="both",
     )
 
-    load_joint_trajectory1_controller = ExecuteProcess(
-        cmd=[
-            "ros2",
-            "control",
-            "load_controller",
-            "--set-state",
-            "start",
-            "joint_group_effort_controller",
-        ],
-        output="screen",
+    joint_state_broadcaster_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
+    )
+
+    robot_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_group_effort_controller", "--controller-manager", "/controller_manager"],
+    )
+
+    angle_joint_controller = Node(
+        package="angle_joint_controller",
+        executable="angle_joint_controller",
+    )
+
+    # Delay start of robot_controller after `joint_state_broadcaster`
+    delay_robot_controller_spawner_after_joint_state_broadcaster_spawner = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster_spawner,
+            on_exit=[robot_controller_spawner],
+        )
     )
 
     return LaunchDescription(
@@ -144,11 +164,12 @@ def generate_launch_description():
             declare_robot_name,
             declare_use_sim_time,
             declare_headless,
-            declare_ros_control_file,
             start_gazebo_server_cmd,
             start_gazebo_client_cmd,
             start_gazebo_spawner_cmd,
-            load_joint_state_controller,
-            load_joint_trajectory1_controller,
+            control_node,
+            joint_state_broadcaster_spawner,
+            delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
+            angle_joint_controller
         ]
     )

@@ -16,3 +16,36 @@ services:
     stop_grace_period: 1s
     environment:
       ROS_DOMAIN_ID: ${ROS_DOMAIN_ID}
+  sparke_dev:
+    build:
+      args:
+        UID: ${UID}
+        GID: ${GID}
+        USER: ${USER}
+      context: .
+      dockerfile: dockerfiles/Dockerfile.sparke_dev
+    container_name: sparke_dev
+    runtime: nvidia
+    environment:
+      DISPLAY: ${DISPLAY}
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID}
+      UID: ${UID}
+      GID: ${GID}
+      XAUTHORITY: /home/${USER}/.Xauthority
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: graphics,utility
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - .:/opt/ros/ws
+      - /etc/group:/etc/group:ro
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/shadow:/etc/shadow:ro
+      - gazebo-cache:${HOME}/.gazebo
+    user: ${UID}:${GID}
+    privileged: true
+    network_mode: host
+    pid: host
+    command: ./scripts/setup_dev.sh
+    working_dir: /opt/ros/ws
+volumes:
+  gazebo-cache:
