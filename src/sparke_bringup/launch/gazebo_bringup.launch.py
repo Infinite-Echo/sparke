@@ -146,6 +146,11 @@ def generate_launch_description():
         arguments=["joint_group_effort_controller", "--controller-manager", "/controller_manager"],
     )
 
+    angle_joint_controller = Node(
+        package="angle_joint_controller",
+        executable="angle_joint_controller",
+    )
+
     # Delay start of robot_controller after `joint_state_broadcaster`
     delay_robot_controller_spawner_after_joint_state_broadcaster_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
@@ -165,5 +170,6 @@ def generate_launch_description():
             control_node,
             joint_state_broadcaster_spawner,
             delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
+            angle_joint_controller
         ]
     )

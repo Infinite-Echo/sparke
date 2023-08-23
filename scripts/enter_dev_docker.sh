@@ -1,0 +1,1 @@
+docker exec -it sparke_devcontainer bash
