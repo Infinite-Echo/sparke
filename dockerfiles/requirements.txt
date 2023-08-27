@@ -1,3 +1,6 @@
-numpy
 setuptools==58.2.0
-sparke_kinematics==0.0.2a
+numpy >= 1.24.0
+matplotlib >= 3.1.2
+PyQt5
+scipy
+sparke_kinematics==0.1.0b0
