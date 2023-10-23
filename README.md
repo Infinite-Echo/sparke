@@ -1,8 +1,9 @@
 # SPARKE (Servo Powered Autonomous Robot with Kinematic Enhancements)
-Welcome to the SPARKE project! This is a personal project I'm working on during my free time, aiming to create a mini version of the Boston Dynamics Spot robot. Although this started out as a ROS2 port of mike4192's spotMicro project (https://github.com/mike4192/spotMicro), much of the original code has been replaced or will be to better suit ROS2. The project is built on ROS2 and utilizes 3D models from the Spot Micro Open Source Project.
-
 ## Project Overview
 The goal of this project is to replicate the functionality of the Boston Dynamics Spot robot on a smaller scale, leveraging the power of ROS2 and Gazebo simulation. As a robotics intern with a focus on computer engineering, I'm excited to explore and experiment with various concepts within this project.
+
+![V1 and V2](./resources/images/v1_&_v2.JPG)
+![V1 Standing](./resources/images/v1_standing.JPG)
 
 ## Current Progress
 At the moment, this project is a work in progress. As a full time college undergraduate student, I find it hard to consistenly work on this project. There will often be large gaps of time between updates.
