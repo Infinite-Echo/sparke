@@ -72,7 +72,7 @@ class PwmController : public rclcpp::Node
 {
     public:
         PwmController()
-        : Node("pwm_controller_node", rclcpp::NodeOptions().allow_undeclared_parameters(true).automatically_declare_parameters_from_overrides(true))
+        : Node("pwm_controller_node", rclcpp::NodeOptions())
         {
             _servo_cmd_sub = this->create_subscription<i2c_interfaces::msg::ServoArray>(
                 "servo_commands", 10, std::bind(&PwmController::servo_cmd_callback, this, std::placeholders::_1)
