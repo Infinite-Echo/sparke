@@ -164,8 +164,8 @@ its center value. The stop service is useful as a safety operation.
 
 \section testing TESTING
 
-  Basic testing is available from the command line. Start the I2C PWM node with `roslaunch ros_i2cpwm_board i2cpwm_node.launch` (or `roscore` and `rosrun
-ros_i2cpwm_board ros_i2cpwm_board`) and then proceed with example commands contained within the documentation for each service and topic subscriber.
+  Basic testing is available from the command line. Start the I2C PWM node with `roslaunch ros2_i2cpwm_board i2cpwm_node.launch` (or `roscore` and `rosrun
+ros2_i2cpwm_board ros2_i2cpwm_board`) and then proceed with example commands contained within the documentation for each service and topic subscriber.
 
  */
 
@@ -751,20 +751,20 @@ static void _init(const char *filename) {
    # the follow message sets the PWM value of the first two servos to 250 and 350 respectively.
    # depending on center value of each servo, these values may casue forward or backward rotation
 
-   rostopic pub -1 /servos_absolute ros_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 250}, {servo: 2, value: 350}]}"
+   rostopic pub -1 /servos_absolute ros2_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 250}, {servo: 2, value: 350}]}"
 
    # the following messages are an example of finding a continuous servo's center
    # in this example the center is found to be 333
 
-   rostopic pub -1 /servos_absolute ros_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 300}]}"
-   rostopic pub -1 /servos_absolute ros_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 350}]}"
-   rostopic pub -1 /servos_absolute ros_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 320}]}"
-   rostopic pub -1 /servos_absolute ros_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 330}]}"
-   rostopic pub -1 /servos_absolute ros_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 335}]}"
-   rostopic pub -1 /servos_absolute ros_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 333}]}"
+   rostopic pub -1 /servos_absolute ros2_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 300}]}"
+   rostopic pub -1 /servos_absolute ros2_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 350}]}"
+   rostopic pub -1 /servos_absolute ros2_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 320}]}"
+   rostopic pub -1 /servos_absolute ros2_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 330}]}"
+   rostopic pub -1 /servos_absolute ros2_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 335}]}"
+   rostopic pub -1 /servos_absolute ros2_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 333}]}"
 
    # power off servo - eg 'coast' rather than 'brake'
-   rostopic pub -1 /servos_absolute ros_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 0}]}"
+   rostopic pub -1 /servos_absolute ros2_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 0}]}"
    \endcode
 
  */
@@ -824,7 +824,7 @@ void servos_absolute(const i2c_interfaces::msg::ServoArray &msg) {
 
    # drive both servos forward at 40% of maximum speed
 
-   rostopic pub -1 /servos_proportional ros_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 0.40}, {servo: 2, value: 0.40}]}"
+   rostopic pub -1 /servos_proportional ros2_i2cpwm_board/ServoArray "{servos:[{servo: 1, value: 0.40}, {servo: 2, value: 0.40}]}"
 
    # additionally configure one 180 degree servo (±90) used for a robot arm - this servo was determine to have a ragee of ±188
 
@@ -832,8 +832,8 @@ void servos_absolute(const i2c_interfaces::msg::ServoArray &msg) {
 
    # drive the arm servo to its 45 degree position and then to its -45 degree position
 
-   rostopic pub -1 /servos_proportional ros_i2cpwm_board/ServoArray "{servos:[{servo: 9, value: 0.50}]}"
-   rostopic pub -1 /servos_proportional ros_i2cpwm_board/ServoArray "{servos:[{servo: 9, value: -0.50}]}"
+   rostopic pub -1 /servos_proportional ros2_i2cpwm_board/ServoArray "{servos:[{servo: 9, value: 0.50}]}"
+   rostopic pub -1 /servos_proportional ros2_i2cpwm_board/ServoArray "{servos:[{servo: 9, value: -0.50}]}"
    \endcode
  */
 void servos_proportional(const i2c_interfaces::msg::ServoArray &msg) {

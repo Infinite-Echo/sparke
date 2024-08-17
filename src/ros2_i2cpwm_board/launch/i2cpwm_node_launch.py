@@ -14,9 +14,9 @@ def generate_launch_description():
     )
 
     node = Node(
-        package="ros_i2cpwm_board",
-        executable="ros_i2cpwm_board",
-        name="ros_i2cpwm_board",
+        package="ros2_i2cpwm_board",
+        executable="ros2_i2cpwm_board",
+        name="ros2_i2cpwm_board",
         parameters=[config],
     )
 

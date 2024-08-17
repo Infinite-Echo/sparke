@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(ros_i2cpwm_board)
+project(ros2_i2cpwm_board)
 
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
@@ -10,7 +10,7 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
 endif()
 
-add_executable(${PROJECT_NAME} src/i2cpwm_controller.cpp)
+add_executable(${PROJECT_NAME} src/ros2_i2cpwm_controller.cpp)
 target_link_libraries(${PROJECT_NAME} i2c)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)

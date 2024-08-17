@@ -50,8 +50,8 @@ def generate_launch_description():
 
     i2cpwm_board_node = Node(
         condition=IfCondition(PythonExpression([" not ", use_simulation])),
-        package="ros_i2cpwm_board",
-        executable="ros_i2cpwm_board",
+        package="ros2_i2cpwm_board",
+        executable="ros2_i2cpwm_board",
     )
 
     spot_micro_motion_cmd_node = Node(
