@@ -89,7 +89,6 @@ class PwmController : public rclcpp::Node
             this->_num_servos = this->get_parameter("num_servos").as_int();
             this->_board_number = this->get_parameter("board_number").as_int();
 
-            this->init_board(this->_board_number);
 
             device << "/dev/i2c-" << this->_controller_io_device;
             const char* filename = device.str().c_str();
@@ -101,6 +100,8 @@ class PwmController : public rclcpp::Node
             {
                 RCLCPP_INFO(this->get_logger(), ("I2C bus opened on %s", filename));
             }
+            
+            this->init_board(this->_board_number);
         }
 
         void set_pwm_frequency(int freq)
