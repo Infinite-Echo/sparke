@@ -1,0 +1,7 @@
+pwm_controller_node:
+  ros__parameters:
+    num_servos: 12
+    controller_io_handle: 0
+    i2c_device_number: 1
+    pwm_frequency: 50
+    board_number: 0
