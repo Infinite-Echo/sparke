@@ -74,11 +74,11 @@ class ServoConvert:
     for 1 ms, 1.5 ms, and 2 ms, respectively
     """
 
-    def __init__(self, id=1, center_value=306, direction=1):
+    def __init__(self, id=1, center_value=2000, direction=1):
         self.value = center_value
         self._center = center_value
-        self._min = 83
-        self._max = 520
+        self._min = 1000
+        self._max = 3000
         self._dir = direction
         self.id = id
 
@@ -149,7 +149,7 @@ class SpotMicroServoControl(Node):
 
         # Create the servo array publisher
         self.ros_pub_servo_array = self.create_publisher(
-            ServoArray, "/servos_absolute", 10
+            ServoArray, "/servo_commands", 10
         )
         self.get_logger().info("> Publisher corrrectly initialized")
 
@@ -160,7 +160,7 @@ class SpotMicroServoControl(Node):
 
     def send_servo_msg(self):
         for servo_key, servo_obj in self.servos.items():
-            self._servo_msg.servos[servo_obj.id].servo = servo_obj.id + 1
+            self._servo_msg.servos[servo_obj.id].servo = servo_obj.id
             self._servo_msg.servos[servo_obj.id].value = float(servo_obj.value)
             # self.get_logger().info("Sending to %s command %d"%(servo_key, servo_obj.value))
 
