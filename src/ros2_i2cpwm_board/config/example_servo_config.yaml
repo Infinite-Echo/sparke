@@ -3,5 +3,5 @@ pwm_controller_node:
     num_servos: 12
     controller_io_handle: 0
     i2c_device_number: 1
-    pwm_frequency: 50
+    pwm_frequency: 320
     board_number: 0

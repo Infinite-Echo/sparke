@@ -102,6 +102,7 @@ class PwmController : public rclcpp::Node
             }
             
             this->init_board(this->_board_number);
+            this->set_pwm_frequency(this->_pwm_frequency);
         }
 
         void set_pwm_frequency(int freq)
