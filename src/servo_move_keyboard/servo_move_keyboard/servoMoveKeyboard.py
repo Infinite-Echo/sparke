@@ -59,6 +59,7 @@ keyDict = {
     "b": lambda x: x.set_min(x.value),
     "n": lambda x: x.set_center(x.value),
     "m": lambda x: x.set_max(x.value),
+    "t": lambda x: x.set_from_user_input(),
 }
 
 validCmds = ["quit", "oneServo", "allServos"]
@@ -91,6 +92,13 @@ class ServoConvert:
             print("Servo value not in range [0,4095]")
         else:
             self.value = value_in
+
+    def set_from_user_input(self):
+        user_input = input("Enter Value: ")
+        if int(user_input) not in range(4096):
+            print("Servo value not in range [0,4095]")
+        else:
+            self.value = int(user_input)
 
     def set_center(self, center_val):
         """
