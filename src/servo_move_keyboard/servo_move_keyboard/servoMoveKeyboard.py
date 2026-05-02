@@ -39,6 +39,7 @@ Keyboard commands for One Servo Control
   b: Save new min command value
   n: Save new center command value
   m: Save new max command value
+  t: Manually input a servo command
 
 
   anything else : Prompt again for command
@@ -95,10 +96,7 @@ class ServoConvert:
 
     def set_from_user_input(self):
         user_input = input("Enter Value: ")
-        if int(user_input) not in range(4096):
-            print("Servo value not in range [0,4095]")
-        else:
-            self.value = int(user_input)
+        self.set_value(int(user_input))
 
     def set_center(self, center_val):
         """
